@@ -7,7 +7,7 @@ spring:
       "local" : "local, common"
       "dev" : "dev, common"
       "real" : "real, common"
-    active: local   #활성 프로필 설정(local, dev, real)
+    active: dev   #활성 프로필 설정(local, dev, real)
 
 --- # local 설정
 spring:
