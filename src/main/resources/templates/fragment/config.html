@@ -1,0 +1,29 @@
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+    <!--configFragment 선언-->
+    <th:block th:fragment="configFragment">
+
+        <!-- 이 영역에 공통으로 사용할 css, js library를 선언한다. -->
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <link rel="preconnect" th:href="@{https://fonts.googleapis.com}">
+        <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding:wght@400;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/static/css/style.css}">
+
+        <script src="https://kit.fontawesome.com/26fcadfd60.js" crossorigin="anonymous"></script>
+        <script th:src="@{/static/js/index.js}" defer></script>
+        <script th:src="@{/static/js/header.js}" defer></script>
+        <script th:src="@{/static/js/common.js}" defer></script>
+
+        <!-- Content Page의 CSS fragment 삽입 -->
+        <th:block layout:fragment="css"></th:block>
+
+        <!-- Content Page의 script fragment 삽입 -->
+        <th:block layout:fragment="script"></th:block>
+
+    </th:block>
+
+</html>

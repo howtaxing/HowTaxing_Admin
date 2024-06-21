@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xmonster.howtaxing_admin.repository.MemberMapper">
+
+    <select id="findByName" parameterType="String" resultType="com.xmonster.howtaxing_admin.domain.Member">
+        SELECT * FROM opentutorials.member WHERE name = #{name}
+    </select>
+
+    <select id="findById" parameterType="Long" resultType="com.xmonster.howtaxing_admin.domain.Member">
+        SELECT * FROM opentutorials.member WHERE id = #{id}
+    </select>
+
+    <insert id="save" parameterType="com.xmonster.howtaxing_admin.domain.Member">
+        INSERT INTO opentutorials.member(name) VALUES (#{name})
+    </insert>
+
+    <select id="findAll" resultType="com.xmonster.howtaxing_admin.domain.Member">
+        SELECT * FROM opentutorials.member;
+    </select>
+
+</mapper>

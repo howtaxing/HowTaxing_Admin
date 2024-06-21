@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default_layout">
+
+    <th:block layout:fragment="script">
+        <script th:src="@{/static/js/login.js}"></script>
+    </th:block>
+
+    <div layout:fragment="content">
+        <section class="section">
+            <div class="contentFrame">
+                <div class="login">
+                    <div class="login_contents_row">
+                        <div class="login_contents_cell">
+                            <div class="contents_title_area">
+                                <div class="contents_title">관리자 로그인</div>
+                            </div>
+
+                            <hr class="split_title">
+                        </div>
+                    </div>
+
+                    <div class="login_contents_row">
+                        <div class="login_contents_cell">
+                            <div class="contents_center">
+                                <!-- 관리자 주소 -->
+                                <div class="form loginForm">
+                                    <input type="text" class="loginInput" id="email_Id" name="email_Id" autocomplete="off" required />
+                                    <label for="email_Id" class="label-name">
+                                        <span class="content-name">관리자 아이디를 입력해주세요.</span>
+                                    </label>
+                                </div>
+                                <!-- 비밀번호 -->
+                                <div class="form loginForm">
+                                    <input type="password" class="loginInput" id="passwd" name="passwd" autocomplete="off" required />
+                                    <label for="passwd" class="label-name">
+                                        <span class="content-name">비밀번호를 입력해주세요.</span>
+                                    </label>
+                                </div>
+                                <!-- 로그인 버튼 -->
+                                <button class="important big mt100">로그인</button>
+                                <!-- 로그인 유지 / 이메일 저장 / 아이디 및 비밀번호 찾기 -->
+                                <div class="login_check">
+                                    <div class="login_save">
+                                        <input type="checkbox" id="keep_login" />
+                                        <label for="keep_login"> <span></span>로그인 유지</label>
+                                        <input type="checkbox" id="save_email" />
+                                        <label for="save_email"> <span></span>아이디 저장</label>
+                                    </div>
+                                    <!--<div class="login_find">
+                                        <a href="">아이디/비밀번호 찾기</a>
+                                    </div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</html>

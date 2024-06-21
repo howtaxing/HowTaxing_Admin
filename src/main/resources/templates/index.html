@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <!--<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">-->
+    <title>Index</title>
+    <!--<script src="https://kit.fontawesome.com/26fcadfd60.js" crossorigin="anonymous"></script>-->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../static/js/index.js" defer></script>
+    <script src="../static/js/header.js" defer></script>
+</head>
+<body>
+    <nav class="navbar"></nav>
+    <!-- contents -->
+    <!--<article class="article"></article>-->
+    <th:block th:replace="fragment/contents :: contentFragment"></th:block>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>COPYRIGHT &copy;2024. HOWTAXING</p>
+        </div>
+    </footer>
+    <div class="bg-shadow"></div>
+</body>
+</html>

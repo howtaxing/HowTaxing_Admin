@@ -1,0 +1,24 @@
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <!--headerFragment 선언-->
+    <nav th:fragment="headerFragment" class="headerbar">
+        <div>
+
+        </div>
+        <div class="headerbar_contents">
+            <ul class="headerbar_menu">
+                <li id="header_menu1"><a href="/moveLogin">로그인</a></li>
+                <li class="split_bar"> | </li>
+                <li id="header_menu2"><a href="/moveJoin01">관리자</a></li>
+            </ul>
+        </div>
+        <!--<div class="headerFrame">
+            <a href="#" class="navbar_toggleBtn">
+                <i class="fas fa-bars" id="openBtn"></i>
+                <i class="fas fa-times" id="closeBtn" ></i>
+            </a>
+        </div>-->
+    </nav>
+
+</html>

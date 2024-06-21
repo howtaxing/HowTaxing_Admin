@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<haed>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+        function join() {
+            var param = {};
+            param.name = $("#name").val();
+            alert(param.name);
+
+            $.ajax({
+                url: "/members/new",
+                type: "POST",
+                data: param,
+                success:function(ret){
+                    //console.log("json_parse : " + JSON.parse(data));
+                    console.log("success : " + JSON.stringify(ret));
+                    var result = ret.result;
+                    var rtnMsg = ret.rtnMsg;
+                    if(result == "success"){
+                        alert("가입 성공");
+                        window.location.href = "/";
+                    }else{
+                        alert(rtnMsg);
+                    }
+                },
+                error:function(e){
+                    console.log("error : " + JSON.stringify(e));
+                    alert("오류 발생 : 관리자에게 문의하세요.");
+                }
+            });
+        }
+    </script>
+</haed>
+<body>
+
+<div class="container">
+
+    <form action="/members/new" method="post">
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" placeholder="이름을 입력하세요">
+        </div>
+        <!--<button type="submit">등록</button>-->
+        <button type="button" onclick="join()">등록</button>
+    </form>
+
+</div> <!--- /container --->
+
+</body>
+</html>

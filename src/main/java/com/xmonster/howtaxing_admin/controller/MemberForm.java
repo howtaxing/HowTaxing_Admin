@@ -1,0 +1,13 @@
+package com.xmonster.howtaxing_admin.controller;
+
+public class MemberForm {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
