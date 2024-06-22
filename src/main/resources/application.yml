@@ -30,7 +30,9 @@ spring:
       validation-query: 'select 1'
       time-between-eviction-runs-millis: 3000
   batch:
-    initialize-schema: always
+    initialize-schema: never
+    job:
+      enabled: false
   mvc:
     custom-uri-logging-filter:
       enabled: true
@@ -63,7 +65,9 @@ spring:
       validation-query: 'select 1'
       time-between-eviction-runs-millis: 3000
   batch:
-    initialize-schema: always
+    initialize-schema: never
+    job:
+      enabled: false
   mvc:
     custom-uri-logging-filter:
       enabled: true
