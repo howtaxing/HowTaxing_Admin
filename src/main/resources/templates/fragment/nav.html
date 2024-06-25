@@ -4,13 +4,14 @@
     <nav th:fragment="navFragment" class="navbar">
         <div class="navbar_contents">
             <div class="navbar_logo">
-                <a href="/moveLogin"><img th:src="@{/static/images/howtaxing_kor_logo.png}" id="logo"></img></a>
+                <a href="/moveLogin"><img th:src="@{/images/howtaxing_kor_logo.png}" id="logo"></img></a>
             </div>
             <ul class="navbar_menu">
                 <li id="gnb_menu1"><a href="/moveCalculationProcess">계산프로세스</a></li>
                 <li id="gnb_menu2"><a href="/moveCommonCode">공통코드</a></li>
                 <li id="gnb_menu3"><a href="/moveTaxRateInfo">세율정보</a></li>
                 <li id="gnb_menu4"><a href="/moveDeductionInfo">공제정보</a></li>
+                <li id="gnb_menu4"><a href="/moveBatch">배치정보</a></li>
             </ul>
         </div>
     </nav>

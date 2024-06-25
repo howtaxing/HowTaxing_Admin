@@ -4,8 +4,8 @@
     font-style: normal;
     font-weight: 100;
     src: local(''),
-    url('/static/font/noto-sans-kr-v21-latin_korean-100.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url('/static/font/noto-sans-kr-v21-latin_korean-100.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/font/noto-sans-kr-v21-latin_korean-100.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('/font/noto-sans-kr-v21-latin_korean-100.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* noto-sans-kr-300 - latin_korean */
 @font-face {
@@ -13,8 +13,8 @@
     font-style: normal;
     font-weight: 300;
     src: local(''),
-    url('/static/font/noto-sans-kr-v21-latin_korean-300.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url('/static/font/noto-sans-kr-v21-latin_korean-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/font/noto-sans-kr-v21-latin_korean-300.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('/font/noto-sans-kr-v21-latin_korean-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* noto-sans-kr-regular - latin_korean */
 @font-face {
@@ -22,8 +22,8 @@
     font-style: normal;
     font-weight: 400;
     src: local(''),
-    url('/static/font/noto-sans-kr-v21-latin_korean-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url('/static/font/noto-sans-kr-v21-latin_korean-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/font/noto-sans-kr-v21-latin_korean-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('/font/noto-sans-kr-v21-latin_korean-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* noto-sans-kr-500 - latin_korean */
 @font-face {
@@ -31,8 +31,8 @@
     font-style: normal;
     font-weight: 500;
     src: local(''),
-    url('/static/font/noto-sans-kr-v21-latin_korean-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url('/static/font/noto-sans-kr-v21-latin_korean-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/font/noto-sans-kr-v21-latin_korean-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('/font/noto-sans-kr-v21-latin_korean-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* noto-sans-kr-700 - latin_korean */
 @font-face {
@@ -40,8 +40,8 @@
     font-style: normal;
     font-weight: 700;
     src: local(''),
-    url('/static/font/noto-sans-kr-v21-latin_korean-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url('/static/font/noto-sans-kr-v21-latin_korean-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/font/noto-sans-kr-v21-latin_korean-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('/font/noto-sans-kr-v21-latin_korean-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 /* noto-sans-kr-900 - latin_korean */
 @font-face {
@@ -49,8 +49,8 @@
     font-style: normal;
     font-weight: 900;
     src: local(''),
-    url('/static/font/noto-sans-kr-v21-latin_korean-900.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url('/static/font/noto-sans-kr-v21-latin_korean-900.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    url('/font/noto-sans-kr-v21-latin_korean-900.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('/font/noto-sans-kr-v21-latin_korean-900.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 :root {
@@ -887,7 +887,7 @@ select {
     padding: 5px;
     border: 1px solid #999;
     font-family: 'Noto Sans KR';
-    background: url('/static/images/arrow_down.png') no-repeat 97% 50%/15px auto;
+    background: url('/images/arrow_down.png') no-repeat 97% 50%/15px auto;
     border-radius: 3px;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -900,7 +900,7 @@ select.big{
     padding: 5px;
     border: 1px solid #999;
     font-family: 'Noto Sans KR';
-    background: url('/static/images/arrow_down.png') no-repeat 97% 50%/15px auto;
+    background: url('/images/arrow_down.png') no-repeat 97% 50%/15px auto;
     border-radius: 3px;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -975,7 +975,7 @@ button.important.big {
 }
 button.important.big.kakao {
     background-color:#FAE101;
-    background-image: url('/static/images/icon_kakao.png');
+    background-image: url('/images/icon_kakao.png');
     background-repeat: no-repeat;
     background-position: 1px;
     background-size: 50px;
@@ -985,7 +985,7 @@ button.important.big.kakao {
 }
 button.important.big.naver {
     background-color:#00BF17;
-    background-image: url('/static/images/icon_naver.png');
+    background-image: url('/images/icon_naver.png');
     background-repeat: no-repeat;
     background-position: 1px;
     background-size: 50px;
@@ -995,7 +995,7 @@ button.important.big.naver {
 }
 button.important.big.google {
     background-color:#F2F2F2;
-    background-image: url('/static/images/icon_google.png');
+    background-image: url('/images/icon_google.png');
     background-repeat: no-repeat;
     background-position: 10px;
     background-size: 30px;
@@ -1022,12 +1022,12 @@ input[type="checkbox"] + label span {
     height: 24px;
     margin: -2px 5px 0 0;
     vertical-align: middle;
-    background: url('/static/images/checkbox.svg') left top no-repeat;
+    background: url('/images/checkbox.svg') left top no-repeat;
     cursor: pointer;
     background-size: cover;
 }
 input[type="checkbox"]:checked + label span {
-    background:url('/static/images/checkbox.svg')  -26px top no-repeat;
+    background:url('/images/checkbox.svg')  -26px top no-repeat;
     background-size: cover;
 }
 
