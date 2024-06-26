@@ -11,15 +11,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import java.io.File;
 
 @Configuration
 @RequiredArgsConstructor
 public class CsvReader {
     @Bean
     public ItemReader<? extends HousePubLandPriceInfoDto> csvFileItemReader() {
+        String filePath = "/files/csv/PubLandPriceInfo_2023.csv";
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new IllegalStateException("File not found: " + filePath);
+        }
+
         /* file read */
         FlatFileItemReader<HousePubLandPriceInfoDto> flatFileItemReader = new FlatFileItemReader<>();
-        flatFileItemReader.setResource(new FileSystemResource("/home/ec2-user/files/csv/PubLandPriceInfo_2023.csv"));
+        flatFileItemReader.setResource(new FileSystemResource(filePath));
         flatFileItemReader.setLinesToSkip(1); // header line skip
         //flatFileItemReader.setEncoding("UTF-8"); // encoding
         flatFileItemReader.setEncoding("EUC-KR"); // encoding
