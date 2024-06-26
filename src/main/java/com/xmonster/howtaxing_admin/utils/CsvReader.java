@@ -10,6 +10,7 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class CsvReader {
     public ItemReader<? extends HousePubLandPriceInfoDto> csvFileItemReader() {
         /* file read */
         FlatFileItemReader<HousePubLandPriceInfoDto> flatFileItemReader = new FlatFileItemReader<>();
-        flatFileItemReader.setResource(new ClassPathResource("/csv/PubLandPriceInfo_2023.csv"));
+        flatFileItemReader.setResource(new FileSystemResource("/home/ec2-user/files/csv/PubLandPriceInfo_2023.csv"));
         flatFileItemReader.setLinesToSkip(1); // header line skip
         //flatFileItemReader.setEncoding("UTF-8"); // encoding
         flatFileItemReader.setEncoding("EUC-KR"); // encoding
