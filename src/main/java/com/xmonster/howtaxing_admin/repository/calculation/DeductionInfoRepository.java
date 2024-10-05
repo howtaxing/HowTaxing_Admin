@@ -1,4 +1,4 @@
-package com.xmonster.howtaxing_admin.repository;
+package com.xmonster.howtaxing_admin.repository.calculation;
 
 import com.xmonster.howtaxing_admin.model.DeductionInfo;
 import org.springframework.data.jpa.repository.JpaRepository;

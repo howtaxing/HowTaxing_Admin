@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    gnb3_On();
-    side3_On();
+    gnb1_On();
+    side1_On();
 
     // 팝업 닫기
     $(".popCloseBtn").click(function (){
@@ -9,16 +9,16 @@ $(document).ready(function(){
 
     // LNB
     $(".menu_wrap li").hover(function (){
-        side3_Off();
+        side1_Off();
     }, function (){
-        side3_On();
+        side1_On();
     });
 
     // GNB
     $(".navbar_menu li").hover(function (){
-        gnb3_Off();
+        gnb1_Off();
     }, function (){
-        gnb3_On();
+        gnb1_On();
     });
 
     // 세율코드 select change event
@@ -176,24 +176,6 @@ function getUsedFuncList(){
             console.log("사용함수 목록 조회 중 오류가 발생했습니다(3)-" + JSON.stringify(e));
         }
     });
-}
-
-function gnb3_On() {
-    $("#gnb_menu3").attr("class", "on");
-    $("#gnb_menu3 a").attr("class", "on");
-}
-
-function gnb3_Off() {
-    $("#gnb_menu3").attr("class", "");
-    $("#gnb_menu3 a").attr("class", "");
-}
-
-function side3_On() {
-    $("#side_menu3").attr("class", "on");
-}
-
-function side3_Off() {
-    $("#side_menu3").attr("class", "");
 }
 
 function saveData() {

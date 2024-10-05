@@ -4,7 +4,7 @@ import com.xmonster.howtaxing_admin.dto.calculation_process.CalculationProcessSa
 import com.xmonster.howtaxing_admin.dto.common.ApiResponse;
 import com.xmonster.howtaxing_admin.model.CalculationProcess;
 import com.xmonster.howtaxing_admin.model.CalculationProcessId;
-import com.xmonster.howtaxing_admin.repository.CalculationProcessRepository;
+import com.xmonster.howtaxing_admin.repository.calculation.CalculationProcessRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

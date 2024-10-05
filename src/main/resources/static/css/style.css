@@ -109,7 +109,7 @@ a { text-decoration: none; color: #333333; }
 }
 
 .headerbar .headerbar_contents {
-    width: 800px;
+    width: 70%;
     margin: auto;
     display: flex;
     justify-content: flex-end;
@@ -149,14 +149,15 @@ a { text-decoration: none; color: #333333; }
 }
 
 .navbar_contents {
-    width: 800px;
+    width: 70%;
     margin: auto;
     display: flex;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
 }
 
 .navbar_logo {
     padding-top: 10px;
+    margin-right: 100px;
 }
 
 .navbar_logo img {
@@ -170,6 +171,7 @@ a { text-decoration: none; color: #333333; }
     display: flex;
     list-style: none;
     padding-left: 0;
+    padding-right: 100px;
     margin: 0;
 }
 
@@ -212,6 +214,44 @@ a { text-decoration: none; color: #333333; }
     font-weight: bold;
 }
 
+.navbar_menu li .sub_menu{
+    display: none;
+    position: absolute;
+    top: 35px;
+    /*left: 30px;*/
+    left: inherit;
+    border: 1px solid #ddd;
+    background: #fff;
+    list-style: none;
+    padding: 10px;
+}
+
+.navbar_menu li .sub_menu li:after {
+    display: block;
+    border-bottom: none;
+}
+
+.navbar_menu li .sub_menu li > a.on {
+    color: #333333;
+    font-weight: normal;
+}
+
+.navbar_menu li .sub_menu li {
+    padding-left:5px;
+    padding-right:5px;
+}
+.navbar_menu li:hover .sub_menu {
+    display: block;
+}
+.navbar_menu li .sub_menu li a {
+    display: block; padding: 10px 15px;
+}
+.navbar_menu li .sub_menu li a:hover {
+    background: #eee;
+    border: none;
+}
+/*.navbar_menu li > li + li{margin-top:5px;}*/
+
 .navbar_icons {
     list-style: none;
     color: white;
@@ -238,11 +278,12 @@ a { text-decoration: none; color: #333333; }
 }
 
 section .contentFrame {
-    width: 800px;
+    width: 70%;
     margin: auto;
     align-items: center;
     position: relative;
     border: solid 1px #8c8c8c;
+    min-width: 1700px;
     min-height: 770px;
     background-color: white;
 }
@@ -320,6 +361,161 @@ section .contentFrame .bottomArea {
 .gen_text {
     width: 100%;
     height: 24px;
+}
+.gen_text_01 {
+    width: 200px;
+    height: 24px;
+}
+
+.gen_textarea {
+    width: 98%;
+    height: 100px;
+    border: 1px solid #c6c9cc;
+    line-height: 2.1;
+}
+
+
+
+
+/* 검색 박스 START */
+.search_form {
+    width: 100%;
+    min-width: 1600px;
+    border: solid 1px grey;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+.search_form .search_table {
+    border-spacing: 5px 25px;
+    width: 100%;
+}
+.search_form .search_table .field{
+    padding-left: 15px;
+}
+.search_text {
+    height: 24px;
+    min-width: 200px;
+}
+/* 검색 박스 END */
+
+/* 조회 결과 START */
+.result_list {
+    color: #666;
+    font: 14px/24px "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", Sans-Serif;
+}
+.result_list table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+.result_list table th,
+.result_list table td {
+    padding: 6px 15px;
+    text-align: center;
+}
+.result_list table th {
+    background: #42444e;
+    color: #fff;
+}
+.result_list table tr:first-child th:first-child {
+    border-top-left-radius: 6px;
+}
+.result_list table tr:first-child th:last-child {
+    border-top-right-radius: 6px;
+}
+.result_list table td {
+    border-right: 1px solid #c6c9cc;
+    border-bottom: 1px solid #c6c9cc;
+}
+.result_list table td.left{
+    text-align: left !important;
+}
+.result_list table td.right{
+    text-align: right !important;
+}
+.result_list table td:first-child {
+    border-left: 1px solid #c6c9cc;
+}
+.result_list table tr:nth-child(even) td {
+    background: #eaeaed;
+}
+.result_list table tr:last-child td:first-child {
+    border-bottom-left-radius: 6px;
+}
+.result_list table tr:last-child td:last-child {
+    border-bottom-right-radius: 6px;
+}
+/* 조회 결과 END */
+
+
+/* 상세 테이블 01 START */
+.detail_tb_01 {
+    color: #666;
+    font: 14px/24px "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", Sans-Serif;
+}
+.detail_tb_01 table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #c6c9cc;
+}
+.detail_tb_01 table th,
+.detail_tb_01 table td {
+    padding: 6px 15px;
+    text-align: center;
+    border-bottom: 1px solid #c6c9cc;
+    border-right: 1px solid #c6c9cc;
+}
+.detail_tb_01 table th {
+    background: #eaeaed;
+}
+.detail_tb_01 table td {
+    text-align: left;
+}
+/* 상세 테이블 01 END */
+
+/* 상세 테이블 02 START */
+.detail_tb_02 {
+    color: #666;
+    font: 14px/24px "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", Sans-Serif;
+}
+.detail_tb_02 table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #c6c9cc;
+}
+.detail_tb_02 table tr.highlight1{
+    background: #f8e1d4;
+}
+.detail_tb_02 table th,
+.detail_tb_02 table td {
+    padding: 6px 15px;
+    text-align: center;
+    border-bottom: 1px solid #c6c9cc;
+    border-right: 1px solid #c6c9cc;
+}
+.detail_tb_02 table th {
+    background: #eaeaed;
+}
+.detail_tb_02 table td {
+    text-align: center;
+}
+.detail_tb_02 table td.left{
+    text-align: left !important;
+}
+.detail_tb_02 table td.right{
+    text-align: right !important;
+}
+/* 상세 테이블 02 END */
+
+
+.url_link {
+    font-size: 15px;
+    color: #2982C8;
+    font-weight: 500;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .consultingContentArea {
@@ -414,7 +610,7 @@ section .contentFrame .bottomArea {
     color: dimgrey;
 }
 
-.contacgtContentArea {
+.contactContentArea {
     margin-left: auto;
     margin-right: auto;
     width:100%;
@@ -537,6 +733,13 @@ section .contentFrame .bottomArea {
     font-size:18px;
     font-weight: 600;
     padding-left:5px;
+}
+.contents_text_title {
+    text-align: left;
+    font-size:16px;
+    font-weight: 400;
+    padding-left:5px;
+    display: block;
 }
 .content_text_explain {
     text-align: left;
@@ -662,7 +865,32 @@ section .contentFrame .bottomArea {
 
 
 /************************************ 상담안내(consulting) 페이지 START ************************************/
-.select_date { padding-top: 20px; padding-bottom: 10px; display: flex; justify-content: space-around; }
+
+.week_period {
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    margin: 5px;
+    /* background-color: #eeeeee; */
+    color: #585858;
+    width: 55%;
+    min-width: 900px;
+    padding: 10px 50px;
+    font-size: 17px;
+    border-radius: 35px;
+    margin-top: 20px;
+    font-weight: 500;
+    border: solid 1px lightgrey;
+}
+
+.select_date {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: space-around;
+    width: 60%;
+    min-width: 1000px;
+}
 .select_date .arrow { position:relative; top:30px; cursor: pointer; }
 .select_date .each_date { display: inline-block; text-align: center; cursor: pointer; }
 .select_date .each_date .date { padding-top: 9px; padding-bottom: 9px; font-size: 20px; font-weight: 700; color: #585858; }
@@ -673,8 +901,16 @@ section .contentFrame .bottomArea {
 .select_time { padding-top: 20px; padding-bottom: 10px; display: block; }
 .select_time .select_time_row { margin: 0 30px; display: flex; }
 .select_time .select_time_row .each_time {
-    display: inline-block; text-align: center; cursor: pointer; margin: 5px;
-    background-color: #dedede; color: #585858; padding: 23px 16px; font-size: 17px; }
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    margin: 5px;
+    background-color: #dedede;
+    color: #585858;
+    padding: 20px 40px;
+    font-size: 17px;
+    border-radius: 5px;
+}
 .select_time .select_time_row .each_time.clicked{ background-color: #2982C8; color: white; }
 .select_time .select_time_row .each_time.disabled{ background-color: #f0f4f5; color: lightgrey; }
 
@@ -692,7 +928,7 @@ section .contentFrame .bottomArea {
 /************************************ 문의(contact) 페이지 START ************************************/
 .form { width: 100%; position: relative; height: 50px; overflow: hidden; }
 
-.form.loginForm { width: 70%; height: 70px; margin-left:auto; margin-right:auto; }
+.form.loginForm { width: 500px; height: 70px; margin-left:auto; margin-right:auto; }
 .form.joinForm { width: 75%; height: 70px; margin-left:auto; margin-right:auto; }
 .form.joinForm.registration { height: 50px; }
 .form.consultingForm { width: 75%; height: 60px; margin: 0 10px 10px 10px;}
@@ -712,10 +948,13 @@ section .contentFrame .bottomArea {
 
 textarea { margin: 5px; border: none; outline: none; resize: none; font-family: 'Noto Sans KR'; }
 .textarea_style { margin-top:30px; width: auto; height: 500px; border: 1px solid lightgrey; font-size: 16px; }
-.textarea_style:hover {
+.textarea_style2 { margin-top:5px; width: auto; height: 200px; border: 1px solid lightgrey; font-size: 16px; }
+.textarea_style:hover,
+.textarea_style2:hover {
     -moz-box-shadow: 0px 0px 10px 1px #EBF6FF; -webkit-box-shadow: 0px 0px 10px 1px #EBF6FF;
     box-shadow: 0px 0px 10px 1px #EBF6FF; border: 1px solid #2982C8; }
-.textarea_style:focus {
+.textarea_style:focus,
+.textarea_style2:focus{
     -moz-box-shadow: 0px 0px 5px 1px #EBF6FF; -webkit-box-shadow: 0px 0px 5px 1px #EBF6FF;
     box-shadow: 0px 0px 5px 1px #EBF6FF; border: 1px solid #2982C8; }
 textarea::-webkit-scrollbar { width: 3px; }
@@ -723,12 +962,17 @@ textarea::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 10px #BDDAE0; 
 textarea::-webkit-scrollbar-thumb { background-color: #2982C8; }
 span.textarea_count { float: right; font-size: 12px; color: grey; }
 .textarea { color: #585858; }
+.textarea2 {
+    color: #585858;
+    line-height: 2.1;
+}
 .textarea::placeholder { color: lightgrey; }
+.textarea2::placeholder { color: lightgrey; }
 /************************************ 문의(contact) 페이지 END ************************************/
 
 
 /************************************ 로그인(login) 페이지 START ************************************/
-.login_check { width: 70%; margin-left:auto; margin-right:auto; display: flex; justify-content: space-between; }
+.login_check { width: 500px; margin-left:auto; margin-right:auto; display: flex; justify-content: space-between; }
 .login_save label{ padding-right: 15px; }
 .login_text { display: block; }
 .login_text .text { font-size:16px; font-weight: 500; padding: 20px 20px; color: #868686; }
@@ -895,6 +1139,9 @@ select {
 }
 select::-ms-expand { display: none; }
 
+select.small{
+    width:100px;
+}
 select.big{
     width: 350px;
     padding: 5px;
@@ -948,6 +1195,23 @@ button.mini:hover {
     background: grey;
     outline: 0;
 }
+button.mini_02 {
+    background-color: orange;
+    width: 80px;
+    height: 28px;
+    font-size: 12px;
+    padding: 0 10px;
+    line-height: 0;
+    border-radius: 5px !important;
+}
+button.mini_02:hover {
+    background: darkorange;
+    outline: 0;
+}
+button.mini_02:disabled {
+    background:grey;
+    cursor: auto;
+}
 button.important {
     /*--button-bg-color: #2982C8;
     --button-hover-bg-color: #42A4EA;*/
@@ -969,7 +1233,7 @@ button.normal:hover {
     outline: 0;
 }
 button.important.big {
-    width: 70%;
+    width: 500px;
     height: 45px;
     margin: 50px 0;
 }
@@ -1007,9 +1271,9 @@ button:disabled {
     opacity: 0.5;
     cursor: auto;
 }
-button:disabled:hover {
+/*button:disabled:hover {
     background-color: #696969;
-}
+}*/
 
 
 /* 체크박스 */
@@ -1177,11 +1441,33 @@ input[type="checkbox"]:checked + label span {
 .mb30 { margin-bottom: 30px !important; }
 .mb40 { margin-bottom: 40px !important; }
 .mb50 { margin-bottom: 50px !important; }
-.mb50 { margin-bottom: 60px !important; }
-.mb50 { margin-bottom: 70px !important; }
-.mb50 { margin-bottom: 80px !important; }
-.mb50 { margin-bottom: 90px !important; }
-.mb50 { margin-bottom: 100px !important; }
+.mb60 { margin-bottom: 60px !important; }
+.mb70 { margin-bottom: 70px !important; }
+.mb80 { margin-bottom: 80px !important; }
+.mb90 { margin-bottom: 90px !important; }
+.mb100 { margin-bottom: 100px !important; }
+
+.ml10 { margin-left: 10px !important; }
+.ml20 { margin-left: 20px !important; }
+.ml30 { margin-left: 30px !important; }
+.ml40 { margin-left: 40px !important; }
+.ml50 { margin-left: 50px !important; }
+.ml60 { margin-left: 60px !important; }
+.ml70 { margin-left: 70px !important; }
+.ml80 { margin-left: 80px !important; }
+.ml90 { margin-left: 90px !important; }
+.ml100 { margin-left: 100px !important; }
+
+.mr10 { margin-right: 10px !important; }
+.mr20 { margin-right: 20px !important; }
+.mr30 { margin-right: 30px !important; }
+.mr40 { margin-right: 40px !important; }
+.mr50 { margin-right: 50px !important; }
+.mr60 { margin-right: 60px !important; }
+.mr70 { margin-right: 70px !important; }
+.mr80 { margin-right: 80px !important; }
+.mr90 { margin-right: 90px !important; }
+.mr100 { margin-right: 100px !important; }
 
 .pt10 { padding-top: 10px !important; }
 .pt20 { padding-top: 20px !important; }
@@ -1290,7 +1576,6 @@ input[type="checkbox"]:checked + label span {
     .navbar_menu.active {
         display: flex;
     }
-
 
 
 

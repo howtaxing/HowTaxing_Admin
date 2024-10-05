@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    gnb2_On();
-    side2_On();
+    gnb1_On();
+    side1_On();
 
     // 팝업 닫기
     $(".popCloseBtn").click(function (){
@@ -9,16 +9,16 @@ $(document).ready(function(){
 
     // LNB
     $(".menu_wrap li").hover(function (){
-        side2_Off();
+        side1_Off();
     }, function (){
-        side2_On();
+        side1_On();
     });
 
     // GNB
     $(".navbar_menu li").hover(function (){
-        gnb2_Off();
+        gnb1_Off();
     }, function (){
-        gnb2_On();
+        gnb1_On();
     });
 
     // 대분류 select
@@ -213,25 +213,6 @@ function getUnitSelList(){
         }
     });
 }
-
-function gnb2_On() {
-    $("#gnb_menu2").attr("class", "on");
-    $("#gnb_menu2 a").attr("class", "on");
-}
-
-function gnb2_Off() {
-    $("#gnb_menu2").attr("class", "");
-    $("#gnb_menu2 a").attr("class", "");
-}
-
-function side2_On() {
-    $("#side_menu2").attr("class", "on");
-}
-
-function side2_Off() {
-    $("#side_menu2").attr("class", "");
-}
-
 
 // 회원 로그인
 function goMemberLogin() {

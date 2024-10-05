@@ -7,11 +7,34 @@
                 <a href="/moveLogin"><img th:src="@{/images/howtaxing_kor_logo.png}" id="logo"></img></a>
             </div>
             <ul class="navbar_menu">
-                <li id="gnb_menu1"><a href="/moveCalculationProcess">계산프로세스</a></li>
-                <li id="gnb_menu2"><a href="/moveCommonCode">공통코드</a></li>
-                <li id="gnb_menu3"><a href="/moveTaxRateInfo">세율정보</a></li>
-                <li id="gnb_menu4"><a href="/moveDeductionInfo">공제정보</a></li>
-                <li id="gnb_menu4"><a href="/moveBatch">배치정보</a></li>
+                <li id="gnb_menu1">
+                    <a href="#">데이터 관리</a>
+                    <ul class="sub_menu">
+                        <li><a href="/moveCalculationProcess">계산프로세스</a></li>
+                        <li><a href="/moveCommonCode">공통코드</a></li>
+                        <li><a href="/moveTaxRateInfo">세율정보</a></li>
+                        <li><a href="/moveDeductionInfo">공제정보</a></li>
+                    </ul>
+                </li>
+                <li id="gnb_menu2">
+                    <a href="#">로그 및 통계</a>
+                    <ul class="sub_menu">
+                        <li><a href="/moveCalculationResult">계산 결과 조회</a></li>
+                    </ul>
+                </li>
+                <li id="gnb_menu3">
+                    <a href="#">상담관리</a>
+                    <ul class="sub_menu">
+                        <li><a href="/moveConsultingScheduleManagement">상담 일정 관리</a></li>
+                        <li><a href="/moveConsultingReservationList">상담 예약 현황</a></li>
+                    </ul>
+                </li>
+                <li id="gnb_menu4">
+                    <a href="#">배치정보</a>
+                    <ul class="sub_menu">
+                        <li><a href="/moveBatch">배치정보</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </nav>

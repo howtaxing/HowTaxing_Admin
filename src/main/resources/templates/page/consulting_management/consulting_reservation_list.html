@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default_layout">
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/consulting_reservation_list.js}"></script>
+</th:block>
+
+<div layout:fragment="content">
+    <section class="section">
+        <div class="contentFrame">
+
+            <div class="titleArea">
+                <div class="contents_title">상담 예약 현황</div>
+                <hr class="split_title">
+                <div class="contents_title_explain">하우택싱 앱에서 사용자들이 상담 예약한 현황을 조회합니다.</div>
+            </div>
+
+            <div class="contentArea">
+                <div class="consultingContentArea">
+
+                    <!-- 상담 예약 현황 -->
+                    <div class="consultingGuideBox">
+                        <img th:src="@{/images/consulting_date.png}" style="width:40px; vertical-align:middle;"></img>
+                        <span class="contents_small_title">상담 예약 현황</span>
+
+                        <div class="search_form">
+                            <table class="search_table">
+                                <colgroup>
+                                    <col style="width:10%">
+                                    <col style="width:35%">
+                                    <col style="width:10%">
+                                    <col style="width:35%">
+                                    <col style="width:10%">
+                                </colgroup>
+                                <tr>
+                                    <td class="field">예약일자</td>
+                                    <td>
+                                        <select id="select1">
+                                            <option value="0">테스트</option>
+                                        </select>
+                                    </td>
+                                    <td class="field">상담진행</td>
+                                    <td>
+                                        <select id="select2">
+                                            <option value="0">전체</option>
+                                        </select>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="field">상담종류</td>
+                                    <td>
+                                        <select id="select3">
+                                            <option value="0">전체</option>
+                                        </select>
+                                    </td>
+                                    <td class="field">고객명</td>
+                                    <td>
+                                        <input type="text" class="search_text" id="customer_name" autocomplete="off" style="width:50%;" placeholder="고객명 입력" required />
+                                    </td>
+                                    <td>
+                                        <button class="mini">조회</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="result_list mt40">
+                            <table>
+                                <colgroup>
+                                    <col style="width:5%">
+                                    <col style="width:10%">
+                                    <col style="width:13%">
+                                    <col style="width:12%">
+                                    <col style="width:25%">
+                                    <col style="width:10%">
+                                    <col style="width:15%">
+                                    <col style="width:10%">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>번호</th>
+                                    <th>상담번호</th>
+                                    <th>예약일자</th>
+                                    <th>예약시간</th>
+                                    <th>상담종류</th>
+                                    <th>고객명</th>
+                                    <th>상담자</th>
+                                    <th>상담진행</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <!--<td><span class="url_link" id="ggmanyar" onclick="goDetail(this)">122</span></td>-->
+                                    <td>
+                                        <a class="url_link" data-value="122">122</a>
+                                    </td>
+                                    <td>2024.08.05</td>
+                                    <td>12:30</td>
+                                    <td>취득세</td>
+                                    <td>홍길동</td>
+                                    <td>이민정음 세무사</td>
+                                    <td>대기</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>
+                                        <a class="url_link" data-value="121">121</a>
+                                    </td>
+                                    <td>2024.08.05</td>
+                                    <td>12:30</td>
+                                    <td>취득세</td>
+                                    <td>홍길동</td>
+                                    <td>이민정음 세무사</td>
+                                    <td>대기</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>
+                                        <a class="url_link" data-value="120">120</a>
+                                    </td>
+                                    <td>2024.08.05</td>
+                                    <td>12:30</td>
+                                    <td>취득세</td>
+                                    <td>홍길동</td>
+                                    <td>이민정음 세무사</td>
+                                    <td>대기</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>
+                                        <a class="url_link" data-value="119">119</a>
+                                    </td>
+                                    <td>2024.08.05</td>
+                                    <td>12:30</td>
+                                    <td>취득세</td>
+                                    <td>홍길동</td>
+                                    <td>이민정음 세무사</td>
+                                    <td>대기</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>
+                                        <a class="url_link" data-value="118">118</a>
+                                    </td>
+                                    <td>2024.08.05</td>
+                                    <td>12:30</td>
+                                    <td>취득세</td>
+                                    <td>홍길동</td>
+                                    <td>이민정음 세무사</td>
+                                    <td>대기</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>
+                                        <a class="url_link" data-value="117">117</a>
+                                    </td>
+                                    <td>2024.08.05</td>
+                                    <td>12:30</td>
+                                    <td>취득세</td>
+                                    <td>홍길동</td>
+                                    <td>이민정음 세무사</td>
+                                    <td>대기</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>
+                                        <a class="url_link" data-value="116">116</a>
+                                    </td>
+                                    <td>2024.08.05</td>
+                                    <td>12:30</td>
+                                    <td>취득세</td>
+                                    <td>홍길동</td>
+                                    <td>이민정음 세무사</td>
+                                    <td>대기</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottomArea">
+                <button class="normal" onclick="initData()">초기화</button>
+                <button class="important" onclick="saveData()">저장</button>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="popup_layer" style="display:none;">
+        <div class="popBox loginPop">
+            <div class="popClose">
+                <img th:src="@{/images/btnClose.png}" class="popCloseBtn"></img>
+            </div>
+            <div class="popCont">
+                <div class="row">
+                    <img th:src="@{/images/mobooLogo_Black.png}" class="logo"></img>
+                </div>
+                <div class="row">
+                    <span class="bigText">상담 예약을 위해 로그인이 필요합니다.</span>
+                </div>
+                <div class="row">
+                    <button class="loginBtn blue" onclick="goMemberLogin()">회원<br>로그인</button>
+                    <button class="loginBtn grey" onclick="goNonMemberLogin()">비회원<br>상담예약</button>
+                </div>
+                <div class="row btw">
+                    <span class="smallText">아직 모두의부동산 회원이 아니신가요?</span>
+                    <span class="smallText link" id="joinLink" onclick="goJoin()">회원가입</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

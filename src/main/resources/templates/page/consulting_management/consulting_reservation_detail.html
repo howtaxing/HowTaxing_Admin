@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default_layout">
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/consulting_reservation_detail.js}"></script>
+</th:block>
+
+<input type="hidden" id="consulting_reservation_id" value="${consultingReservationId}">
+
+<div layout:fragment="content">
+    <section class="section">
+        <div class="contentFrame">
+
+            <div class="titleArea">
+                <div class="contents_title">상담 예약 상세</div>
+                <hr class="split_title">
+                <div class="contents_title_explain">하우택싱 앱에서 사용자가 신청한 상담 예약 상세 내용을 조회합니다.</div>
+            </div>
+
+            <div class="contentArea">
+                <div class="consultingContentArea">
+
+                    <!-- 상담 예약 상세보기 -->
+                    <div class="consultingGuideBox">
+                        <img th:src="@{/images/consulting_date.png}" style="width:40px; vertical-align:middle;"></img>
+                        <span class="contents_small_title">상담 예약 상세보기</span>
+
+                        <span class="contents_text_title mt40">1. 상담 기본 정보</span>
+                        <div class="detail_tb_01 mt10">
+                            <table>
+                                <colgroup>
+                                    <col style="width:20%">
+                                    <col style="width:30%">
+                                    <col style="width:20%">
+                                    <col style="width:30%">
+                                </colgroup>
+
+                                <tr>
+                                    <th>상담번호</th>
+                                    <td>121</td>
+                                    <th>예약일자</th>
+                                    <td>2024.08.05</td>
+                                </tr>
+                                <tr>
+                                    <th>상담종류</th>
+                                    <td>양도소득세,상속세</td>
+                                    <th>예약시간</th>
+                                    <td>10:30</td>
+                                </tr>
+                                <tr>
+                                    <th>고객번호</th>
+                                    <td>고봉민</td>
+                                    <th>고객 전화번호</th>
+                                    <td>010-1234-5678</td>
+                                </tr>
+                                <tr>
+                                    <th>상담 유입 경로</th>
+                                    <td>양도소득세 계산</td>
+                                    <th>보유주택정보</th>
+                                    <td>3채</td>
+                                </tr>
+                                <tr>
+                                    <th>고객번호</th>
+                                    <td colspan="3">
+                                        보유주택 중 의정부센트럴자이&위브캐슬 아파트를 2024.10.30에 매도할 계획이라 양도세를 계산해봤습니다.<br/>
+                                        해당 계산 결과가 맞는지 확인 부탁드리고, 계산이 맞다면 이대로 양도소득세 신고를 진행하고 싶습니다.<br/>
+                                        감사합니다.
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <span class="contents_text_title mt40">2. 계산 대상 주택 정보</span>
+                        <div class="detail_tb_01 mt10">
+                            <table>
+                                <colgroup>
+                                    <col style="width:20%">
+                                    <col style="width:30%">
+                                    <col style="width:20%">
+                                    <col style="width:30%">
+                                </colgroup>
+
+                                <tr>
+                                    <th>계산구분</th>
+                                    <td>양도소득세</td>
+                                    <th>주택ID</th>
+                                    <td>2513</td>
+                                </tr>
+                                <tr>
+                                    <th>주택유형</th>
+                                    <td>아파트</td>
+                                    <th>주택명</th>
+                                    <td>의정부역센트럴자이&위브캐슬</td>
+                                </tr>
+                                <tr>
+                                    <th>주소</th>
+                                    <td colspan="3">경기도 의정부시 경의로 130, 205동 2103호 (의정부동, 의정부역센트럴자이&위브캐슬)</td>
+                                </tr>
+                                <tr>
+                                    <th>상세주소</th>
+                                    <td colspan="3">205동 2103호</td>
+                                </tr>
+                                <tr>
+                                    <th>취득계약일자</th>
+                                    <td>2022-07-01</td>
+                                    <th>취득일자</th>
+                                    <td>2022-08-01</td>
+                                </tr>
+                                <tr>
+                                    <th>양도계약일자</th>
+                                    <td>2024-06-05</td>
+                                    <th>양도일자</th>
+                                    <td>2024-08-20</td>
+                                </tr>
+                                <tr>
+                                    <th>양도금액</th>
+                                    <td>600,000,000 (6억원)</td>
+                                    <th>필요경비금액</th>
+                                    <td>5,000,000 (5백만원)</td>
+                                </tr>
+                                <tr>
+                                    <th>멸실여부</th>
+                                    <td>부</td>
+                                    <th>입주권여부</th>
+                                    <td>부</td>
+                                </tr>
+                                <tr>
+                                    <th>소유자수</th>
+                                    <td>2명</td>
+                                    <th>본인지분비율</th>
+                                    <td>50%</td>
+                                </tr>
+                                <tr>
+                                    <th>조정대상지역 여부</th>
+                                    <td>부</td>
+                                    <th>(양도주택 포함)보유주택 수</th>
+                                    <td>3채</td>
+                                </tr>
+                                <tr>
+                                    <th>추가질의 및 응답내용</th>
+                                    <td colspan="3">
+                                        [Q_0001] 신규주택(입주권 또는 분양권) 완공 후 3년 이내에 전입하여 1년 이상 거주, 신규주택이 완공 후 종전주택 3년 이내 양도 : 네<br/>
+                                        [PERIOD_DIAL] 실거주기간 : 3년 2개월<br/>
+                                        [Q_0006] 상생임대인 해당 : 아니오
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <span class="contents_text_title mt40">3. 보유 주택 정보</span>
+                        <div class="detail_tb_02 mt10">
+                            <table>
+                                <colgroup>
+                                    <col style="width:6%">
+                                    <col style="width:8%">
+                                    <col style="width:13%">
+                                    <col style="width:23%">
+                                    <col style="width:15%">
+                                    <col style="width:10%">
+                                    <col style="width:25%">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>번호</th>
+                                    <th>주택ID</th>
+                                    <th>주택유형</th>
+                                    <th>주택명</th>
+                                    <th>상세주소</th>
+                                    <th>취득일자</th>
+                                    <th>비고</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>2511</td>
+                                    <td>아파트</td>
+                                    <td>백운호수해링턴플레이스 2단지</td>
+                                    <td>202동 904호</td>
+                                    <td>2021-06-30</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>2512</td>
+                                    <td>연립/다세대</td>
+                                    <td>대경빌라</td>
+                                    <td>B02호</td>
+                                    <td>2022-05-12</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>2513</td>
+                                    <td>아파트</td>
+                                    <td>의정부역센트럴자이&위브캐슬</td>
+                                    <td>205동 2103호</td>
+                                    <td>2023-11-25</td>
+                                    <td>양도예정주택</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <span class="contents_text_title mt40">4. 계산결과</span>
+                        <div class="detail_tb_02 mt10">
+                            <table>
+                                <colgroup>
+                                    <col style="width:10%">
+                                    <col style="width:20%">
+                                    <col style="width:20%">
+                                    <col style="width:50%">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>소유자</th>
+                                    <th>항목</th>
+                                    <th>값</th>
+                                    <th>비고</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="highlight1">
+                                    <th rowspan="15">소유자1<br>(지분율:50%)</th>
+                                    <td>총 납부세액</td>
+                                    <td class="right">147,454,998원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>양도소득세</td>
+                                    <td class="right">134,049,999원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>지방소득세</td>
+                                    <td class="right">13,404,999원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>양도금액</td>
+                                    <td class="right">500,000,000원</td>
+                                    <td class="left">지분비율 : 50%</td>
+                                </tr>
+                                <tr>
+                                    <td>취득금액</td>
+                                    <td class="right">300,000,000원</td>
+                                    <td class="left">지분비율 : 50%</td>
+                                </tr>
+                                <tr>
+                                    <td>필요경비</td>
+                                    <td class="right">6,000,000원</td>
+                                    <td class="left">지분비율 : 50%</td>
+                                </tr>
+                                <tr>
+                                    <td>양도차익</td>
+                                    <td class="right">194,000,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>비과세 양도차익</td>
+                                    <td class="right">0원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>과세대상 양도차익</td>
+                                    <td class="right">194,000,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>장기보유특별공제</td>
+                                    <td class="right">0원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>양도소득금액</td>
+                                    <td class="right">194,000,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>기본공제</td>
+                                    <td class="right">2,500,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>과세표준</td>
+                                    <td class="right">191,500,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>세율</td>
+                                    <td class="right">70.00%</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>누진공제</td>
+                                    <td class="right">0원</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="highlight1">
+                                    <th rowspan="15">소유자2<br>(지분율:50%)</th>
+                                    <td>총 납부세액</td>
+                                    <td class="right">147,454,998원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>양도소득세</td>
+                                    <td class="right">134,049,999원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>지방소득세</td>
+                                    <td class="right">13,404,999원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>양도금액</td>
+                                    <td class="right">500,000,000원</td>
+                                    <td class="left">지분비율 : 50%</td>
+                                </tr>
+                                <tr>
+                                    <td>취득금액</td>
+                                    <td class="right">300,000,000원</td>
+                                    <td class="left">지분비율 : 50%</td>
+                                </tr>
+                                <tr>
+                                    <td>필요경비</td>
+                                    <td class="right">6,000,000원</td>
+                                    <td class="left">지분비율 : 50%</td>
+                                </tr>
+                                <tr>
+                                    <td>양도차익</td>
+                                    <td class="right">194,000,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>비과세 양도차익</td>
+                                    <td class="right">0원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>과세대상 양도차익</td>
+                                    <td class="right">194,000,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>장기보유특별공제</td>
+                                    <td class="right">0원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>양도소득금액</td>
+                                    <td class="right">194,000,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>기본공제</td>
+                                    <td class="right">2,500,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>과세표준</td>
+                                    <td class="right">191,500,000원</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>세율</td>
+                                    <td class="right">70.00%</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>누진공제</td>
+                                    <td class="right">0원</td>
+                                    <td></td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <span class="contents_text_title mt40">5. 해설</span>
+                        <div class="detail_tb_02 mt10">
+                            <table>
+                                <colgroup>
+                                    <col style="width:6%">
+                                    <col style="width:94%">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>번호</th>
+                                    <th>내용</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td class="left">
+                                        입력하신 필요경비에는 지분율이 적용되지 않으니 지분율이 적용된 경비나 실제 해당 납세자가 지출한 경비를 기재해주세요.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td class="left">
+                                        연 1회 인별 기본공제 250만원이 적용돼요.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td class="left">
+                                        2022.05.10. 다주택자 양도소득세 중과배제 조치 시행으로 22.05.10. - 24.05.09. 까지 한시적으로 적용 배제돼요. 해당 기간 외의 거래에 대해서는 중과 대상(20%, 30%)이며, 장기보유특별공제도 적용되지 않아요.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td class="left">
+                                        고객님은 양도하실 주택을 포함하여 현재 3채를 보유하고 있어요.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td class="left">
+                                        양도하실 주택의 최종 세율은 70.00% 에요.
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <span class="contents_text_title mt40">6. 상담 진행</span>
+                        <div class="detail_tb_01 mt10">
+                            <table>
+                                <colgroup>
+                                    <col style="width:20%">
+                                    <col style="width:80%">
+                                </colgroup>
+
+                                <tr>
+                                    <th>상담번호</th>
+                                    <td>
+                                        <select>
+                                            <option value="0">대기</option>
+                                        </select>
+                                        <button class="mini_02" disabled="disabled">적용</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>고객수수료</th>
+                                    <td>
+                                        <input type="text" class="gen_text_01" disabled="disabled" required /> 원
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>상담 내용<br>(세무사 작성)</th>
+                                    <td>
+                                        <div class="textarea_style2">
+                                            <textarea class="textarea2" style="width:95%; height:95%;" onkeyup="charCount1(this)" maxlength="1000" minlength="3" placeholder="상담내용을 작성해주세요.(1000자 이내)"></textarea>
+                                        </div>
+                                        <span class="textarea_count" id="text_count_consulting_content">0/1000</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>비고</th>
+                                    <td>
+                                        <div class="textarea_style2">
+                                            <textarea class="textarea2" style="width:95%; height:95%;" onkeyup="charCount2(this)" maxlength="255" minlength="3" placeholder="비고 내용을 입력하세요.(255자 이내)"></textarea>
+                                        </div>
+                                        <span class="textarea_count" id="text_count_remark">0/255</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <span class="contents_text_title mt40">7. 상담 현황</span>
+                        <div class="detail_tb_01 mt10">
+                            <table>
+                                <colgroup>
+                                    <col style="width:20%">
+                                    <col style="width:30%">
+                                    <col style="width:20%">
+                                    <col style="width:30%">
+                                </colgroup>
+
+                                <tr>
+                                    <th>상담 요청일시</th>
+                                    <td>2024-08-01 17:00:21</td>
+                                    <th>상담 예약일시</th>
+                                    <td>2024-08-05 10:30</td>
+                                </tr>
+                                <tr>
+                                    <th>상담 시작일시</th>
+                                    <td>2024-08-05 10:30:05</td>
+                                    <th>상담 완료일시</th>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <th>상담 취소일시</th>
+                                    <td>2024-08-05 10:30:05</td>
+                                    <th>최종변경자</th>
+                                    <td>관리자</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottomArea">
+                <button class="normal" onclick="initData()">목록으로 이동</button>
+                <button class="important" onclick="saveData()">저장</button>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="popup_layer" style="display:none;">
+        <div class="popBox loginPop">
+            <div class="popClose">
+                <img th:src="@{/images/btnClose.png}" class="popCloseBtn"></img>
+            </div>
+            <div class="popCont">
+                <div class="row">
+                    <img th:src="@{/images/mobooLogo_Black.png}" class="logo"></img>
+                </div>
+                <div class="row">
+                    <span class="bigText">상담 예약을 위해 로그인이 필요합니다.</span>
+                </div>
+                <div class="row">
+                    <button class="loginBtn blue" onclick="goMemberLogin()">회원<br>로그인</button>
+                    <button class="loginBtn grey" onclick="goNonMemberLogin()">비회원<br>상담예약</button>
+                </div>
+                <div class="row btw">
+                    <span class="smallText">아직 모두의부동산 회원이 아니신가요?</span>
+                    <span class="smallText link" id="joinLink" onclick="goJoin()">회원가입</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

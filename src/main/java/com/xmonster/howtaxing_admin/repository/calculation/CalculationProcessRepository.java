@@ -1,4 +1,4 @@
-package com.xmonster.howtaxing_admin.repository;
+package com.xmonster.howtaxing_admin.repository.calculation;
 
 import com.xmonster.howtaxing_admin.model.CalculationProcess;
 import com.xmonster.howtaxing_admin.model.CalculationProcessId;

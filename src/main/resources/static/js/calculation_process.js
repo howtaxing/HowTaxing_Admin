@@ -440,24 +440,6 @@ function getDedContent(){
     });
 }
 
-function gnb1_On() {
-    $("#gnb_menu1").attr("class", "on");
-    $("#gnb_menu1 a").attr("class", "on");
-}
-
-function gnb1_Off() {
-    $("#gnb_menu1").attr("class", "");
-    $("#gnb_menu1 a").attr("class", "");
-}
-
-function side1_On() {
-    $("#side_menu1").attr("class", "on");
-}
-
-function side1_Off() {
-    $("#side_menu1").attr("class", "");
-}
-
 // 계산프로세스 저장
 function saveData() {
     if(!validationCheckForCalculationProcessSave()){

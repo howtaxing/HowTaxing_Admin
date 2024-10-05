@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    gnb4_On();
-    side4_On();
+    gnb1_On();
+    side1_On();
 
     // 팝업 닫기
     $(".popCloseBtn").click(function (){
@@ -9,16 +9,16 @@ $(document).ready(function(){
 
     // LNB
     $(".menu_wrap li").hover(function (){
-        side4_Off();
+        side1_Off();
     }, function (){
-        side4_On();
+        side1_On();
     });
 
     // GNB
     $(".navbar_menu li").hover(function (){
-        gnb4_Off();
+        gnb1_Off();
     }, function (){
-        gnb4_On();
+        gnb1_On();
     });
 
     // 공제코드 select change event
@@ -152,24 +152,6 @@ function getUnitList(){
             console.log("단위 목록 조회 중 오류가 발생했습니다(3)-" + JSON.stringify(e));
         }
     });
-}
-
-function gnb4_On() {
-    $("#gnb_menu4").attr("class", "on");
-    $("#gnb_menu4 a").attr("class", "on");
-}
-
-function gnb4_Off() {
-    $("#gnb_menu4").attr("class", "");
-    $("#gnb_menu4 a").attr("class", "");
-}
-
-function side4_On() {
-    $("#side_menu4").attr("class", "on");
-}
-
-function side4_Off() {
-    $("#side_menu4").attr("class", "");
 }
 
 function saveData() {

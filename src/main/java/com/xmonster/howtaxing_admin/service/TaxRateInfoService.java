@@ -3,7 +3,7 @@ package com.xmonster.howtaxing_admin.service;
 import com.xmonster.howtaxing_admin.dto.common.ApiResponse;
 import com.xmonster.howtaxing_admin.dto.tax_rate_info.TaxRateInfoSaveRequest;
 import com.xmonster.howtaxing_admin.model.TaxRateInfo;
-import com.xmonster.howtaxing_admin.repository.TaxRateInfoRepository;
+import com.xmonster.howtaxing_admin.repository.calculation.TaxRateInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

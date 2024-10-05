@@ -3,7 +3,7 @@ package com.xmonster.howtaxing_admin.service;
 import com.xmonster.howtaxing_admin.dto.common.ApiResponse;
 import com.xmonster.howtaxing_admin.dto.deduction_info.DeductionInfoSaveRequest;
 import com.xmonster.howtaxing_admin.model.DeductionInfo;
-import com.xmonster.howtaxing_admin.repository.DeductionInfoRepository;
+import com.xmonster.howtaxing_admin.repository.calculation.DeductionInfoRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

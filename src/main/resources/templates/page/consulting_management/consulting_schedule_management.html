@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default_layout">
+
+<th:block layout:fragment="script">
+    <script th:src="@{/js/consulting_schedule_management.js}"></script>
+</th:block>
+
+<div layout:fragment="content">
+    <section class="section">
+        <div class="contentFrame">
+
+            <div class="titleArea">
+                <div class="contents_title">상담 일정 관리</div>
+                <hr class="split_title">
+                <div class="contents_title_explain">하우택싱 앱에서 사용자에게 보여지는 상담 일정을 관리합니다.</div>
+            </div>
+
+            <div class="contentArea">
+                <div class="consultingContentArea">
+
+                    <!-- 1. 상담 날짜 선택 -->
+                    <div class="consultingGuideBox">
+                        <img th:src="@{/images/consulting_date.png}" style="width:40px; vertical-align:middle;"></img>
+                        <span class="contents_small_title">상담 날짜 선택</span>
+
+                        <div class="week_period">
+                            <span id="period">2024.09.04 ~ 2024.09.10</span>
+                        </div>
+                        <div class="select_date">
+                            <span class="arrow">
+                                <i class="fas fa-chevron-left" id="date_arrow_left"></i>
+                            </span>
+
+                            <div class="each_date">
+                                <div class="date" id="date_saturday">04</div>
+                                <div class="dayWeek">토요일</div>
+                            </div>
+                            <div class="each_date">
+                                <div class="date" id="date_sunday">05</div>
+                                <div class="dayWeek">일요일</div>
+                            </div>
+                            <div class="each_date">
+                                <div class="date" id="date_monday">06</div>
+                                <div class="dayWeek">월요일</div>
+                            </div>
+                            <div class="each_date">
+                                <div class="date" id="date_tuesday">07</div>
+                                <div class="dayWeek">화요일</div>
+                            </div>
+                            <div class="each_date">
+                                <div class="date" id="date_wednesday">08</div>
+                                <div class="dayWeek">수요일</div>
+                            </div>
+                            <div class="each_date">
+                                <div class="date" id="date_thursday">09</div>
+                                <div class="dayWeek">목요일</div>
+                            </div>
+                            <div class="each_date">
+                                <div class="date" id="date_friday">10</div>
+                                <div class="dayWeek">금요일</div>
+                            </div>
+
+                            <span class="arrow">
+                                <i class="fas fa-chevron-right" id="date_arrow_right"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr class="split_line">
+
+                    <!-- 2. 상담 상세 설정 -->
+                    <div class="consultingGuideBox">
+                        <img th:src="@{/images/consulting_type.png}" style="width:40px; vertical-align:middle;"></img>
+                        <span class="contents_small_title">상담 상세 설정</span>
+
+                        <table class="gen_table" style="width:100%;">
+                            <colgroup>
+                                <col style="width:10%">
+                                <col style="width:90%">
+                            </colgroup>
+
+                            <tr>
+                                <td style="padding-left: 20px;">예약가능여부</td>
+                                <td>
+                                    <select id="is_reservation_available_sel">
+                                        <option value="0">부</option>
+                                        <option value="1">여</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding-left: 20px;">상담시간설정</td>
+                                <td>
+                                    <select class="small" id="start_hour_sel">
+                                        <option value="0">00</option>
+                                        <option value="1">01</option>
+                                        <option value="2">02</option>
+                                        <option value="3">03</option>
+                                        <option value="4">04</option>
+                                        <option value="5">05</option>
+                                        <option value="6">06</option>
+                                        <option value="7">07</option>
+                                        <option value="8">08</option>
+                                        <option value="9">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                        <option value="14">14</option>
+                                        <option value="15">15</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                        <option value="21">21</option>
+                                        <option value="22">22</option>
+                                        <option value="23">23</option>
+                                    </select>
+                                    <select class="small" id="start_minute_sel">
+                                        <option value="0">00</option>
+                                        <option value="1">30</option>
+                                    </select>
+                                    <span class="ml10 mr10">부터</span>
+                                    <select class="small" id="end_hour_sel">
+                                        <option value="0">00</option>
+                                        <option value="1">01</option>
+                                        <option value="2">02</option>
+                                        <option value="3">03</option>
+                                        <option value="4">04</option>
+                                        <option value="5">05</option>
+                                        <option value="6">06</option>
+                                        <option value="7">07</option>
+                                        <option value="8">08</option>
+                                        <option value="9">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                        <option value="13">13</option>
+                                        <option value="14">14</option>
+                                        <option value="15">15</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                        <option value="21">21</option>
+                                        <option value="22">22</option>
+                                        <option value="23">23</option>
+                                    </select>
+                                    <select class="small" id="end_minute_sel">
+                                        <option value="0">00</option>
+                                        <option value="1">30</option>
+                                    </select>
+                                    <span class="ml10 mr10">까지</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <hr class="split_line">
+
+                    <!-- 3. 상담 불가 시간 설정 -->
+                    <div class="consultingGuideBox">
+                        <img th:src="@{/images/consulting_time.png}" style="width:40px; vertical-align:middle;"></img>
+                        <span class="contents_small_title">상담 불가 시간 설정</span>
+
+                        <div class="select_time">
+                            <div class="select_time_row">
+                                <span class="each_time">09:00</span>
+                                <span class="each_time">09:30</span>
+                                <span class="each_time">10:00</span>
+                                <span class="each_time">10:30</span>
+                                <span class="each_time">11:00</span>
+                                <span class="each_time">11:30</span>
+                                <span class="each_time">12:00</span>
+                                <span class="each_time">12:30</span>
+                                <span class="each_time">13:00</span>
+                                <span class="each_time">13:30</span>
+                            </div>
+                            <div class="select_time_row">
+                                <span class="each_time">14:00</span>
+                                <span class="each_time">14:30</span>
+                                <span class="each_time">15:00</span>
+                                <span class="each_time">15:30</span>
+                                <span class="each_time">16:00</span>
+                                <span class="each_time">16:30</span>
+                                <span class="each_time">17:00</span>
+                                <span class="each_time">17:30</span>
+                                <span class="each_time">18:00</span>
+                                <span class="each_time">18:30</span>
+                            </div>
+                            <div class="select_time_row">
+                                <span class="each_time">19:00</span>
+                                <span class="each_time">19:30</span>
+                                <span class="each_time">20:00</span>
+                                <span class="each_time">20:30</span>
+                                <span class="each_time">21:00</span>
+                                <span class="each_time">21:30</span>
+                                <span class="each_time">22:00</span>
+                                <span class="each_time">22:30</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="split_line">
+
+                </div>
+            </div>
+
+            <div class="bottomArea">
+                <button class="normal" onclick="initData()">초기화</button>
+                <button class="important" onclick="saveData()">저장</button>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="popup_layer" style="display:none;">
+        <div class="popBox loginPop">
+            <div class="popClose">
+                <img th:src="@{/images/btnClose.png}" class="popCloseBtn"></img>
+            </div>
+            <div class="popCont">
+                <div class="row">
+                    <img th:src="@{/images/mobooLogo_Black.png}" class="logo"></img>
+                </div>
+                <div class="row">
+                    <span class="bigText">상담 예약을 위해 로그인이 필요합니다.</span>
+                </div>
+                <div class="row">
+                    <button class="loginBtn blue" onclick="goMemberLogin()">회원<br>로그인</button>
+                    <button class="loginBtn grey" onclick="goNonMemberLogin()">비회원<br>상담예약</button>
+                </div>
+                <div class="row btw">
+                    <span class="smallText">아직 모두의부동산 회원이 아니신가요?</span>
+                    <span class="smallText link" id="joinLink" onclick="goJoin()">회원가입</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
