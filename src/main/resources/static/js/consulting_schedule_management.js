@@ -77,25 +77,20 @@ $(document).ready(function(){
 });
 
 function init() {
-    // 1.상담종류 선택 초기화
-    $("input:radio[name='consultType']").eq(0).attr("checked", true);
-    $("#consultTypePrice_Visit").css("display", "none");
-    $("#consultTypeExplain_Visit").css("display", "none");
-    $("#consultTypePrice_Phone").css("display", "block");
-    $("#consultTypeExplain_Phone").css("display", "block");
-    $("#visit_Detail").css("visibility", "hidden");
-
-    // 2.날짜 선택 초기화
+    // 1. 상담날짜 선택 초기화
     $('.date[date-index=3]').addClass('clicked');
     $('.date[date-index=6]').addClass('disabled');
 
-    // 3.시간 선택 초기화
+    // 2. 상담 상세 설정 초기화
     $('.each_time[time-index=0]').addClass('clicked');
     $('.each_time[time-index=3]').addClass('disabled');
     $('.each_time[time-index=7]').addClass('disabled');
     $('.each_time[time-index=10]').addClass('disabled');
     $('.each_time[time-index=12]').addClass('disabled');
     $('.each_time[time-index=13]').addClass('disabled');
+
+    // 3. 상담 불가 시간 설정 초기화
+
 }
 
 function gnb2_On() {
