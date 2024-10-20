@@ -68,6 +68,11 @@ public class ConsultingService {
                 = consultingScheduleManagementRepository.findByConsultantIdFromStartDateToEndDate(consultantId, startDate, endDate);
 
         if(consultingScheduleManagementList != null){
+            log.info("consultingEachDateInfoList.size() : " + consultingEachDateInfoList.size());
+            log.info("consultingScheduleManagementList.size() : " + consultingScheduleManagementList.size());
+            log.info("startDate : " + startDate);
+            log.info("consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate() : " + consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate());
+
             if(consultingEachDateInfoList.size() == consultingScheduleManagementList.size() &&
                     startDate.equals(consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate())){
                 for(int i=0; i<consultingEachDateInfoList.size(); i++){
@@ -76,11 +81,23 @@ public class ConsultingService {
 
                     // 선택여부 세팅
                     if(baseDate.equals(consultingEachDateInfoList.get(i).getDate())){
+                        log.info("baseDate : " + baseDate);
+                        log.info("consultingEachDateInfoList.get(i).getDate() : " + consultingEachDateInfoList.get(i).getDate());
                         consultingEachDateInfoList.get(i).setIsSelected(true);
                     }
                 }
             }
         }
+
+        log.info("----- consultingEachDateInfoList START -----");
+        for(ConsultingEachDateInfo consultingEachDateInfo : consultingEachDateInfoList){
+            log.info("date : " + consultingEachDateInfo.getDate());
+            log.info("dateStr : " + consultingEachDateInfo.getDateStr());
+            log.info("dayOfWeekStr : " + consultingEachDateInfo.getDayOfWeekStr());
+            log.info("isReservationAvailable : " + consultingEachDateInfo.getIsReservationAvailable());
+            log.info("isSelected : " + consultingEachDateInfo.getIsSelected());
+        }
+        log.info("----- consultingEachDateInfoList END -----");
 
         return ApiResponse.success(
                 ConsultingScheduleWeekInfoResponse.builder()
