@@ -26,6 +26,9 @@ $(document).ready(function(){
         var index = $(this).attr('date-index');
         $('.date[date-index=' + index + ']').addClass('clicked');
         $('.date[date-index!=' + index + ']').removeClass('clicked');
+
+        const selectedDate = $("#date_"+(parseInt(index)+1)).val();
+        console.log("selectedDate : " + selectedDate);
     });
 
     // 2. 상담 상세 설정 event
@@ -90,7 +93,51 @@ function init() {
     $('.each_time[time-index=13]').addClass('disabled');
 
     // 3. 상담 불가 시간 설정 초기화
+    getConsultingScheduleWeekInfo();
+}
 
+function getConsultingScheduleWeekInfo() {
+    const params = {};
+    params.consultantId = 1;
+
+    $.ajax({
+        type: "GET",
+        url: "/consulting/weekInfo",
+        contentType : "application/json",
+        data: params,
+        success:function(ret){
+            console.log("상담 일정 주 정보 조회 : " + JSON.stringify(ret));
+
+            if(nullChk(ret) && nullChk(ret.errYn) && nullChk(ret.data)){
+                const errYn = ret.errYn;
+                const data = ret.data;
+
+                if(errYn === "N"){
+                    //alert("HAPPY");
+                    //$("#period").val(data.consultingWeekInfo);
+                    $("#period").text(data.consultingWeekInfo);
+                    const list = data.consultingEachDateInfoList;
+                    if(list != null && list.length > 0){
+                        for(let i=0; i<list.length; i++) {
+                            $("#dateStr_"+(i+1)).text(list[i].dateStr);
+                            $("#dayOfWeekStr_"+(i+1)).text(list[i].dayOfWeekStr);
+                            $("#date_"+(i+1)).val(list[i].date);
+
+                            console.log("date2 : " + $("#date_"+(i+1)).val());
+                        }
+                    }
+                }else{
+                    alert("ERROR-1");
+                }
+            }else{
+                alert("ERROR-2");
+            }
+        },
+        error:function(e){
+            console.log("오류가 발생했습니다 - " + JSON.stringify(e));
+            alert("ERROR-3");
+        }
+    });
 }
 
 function gnb2_On() {

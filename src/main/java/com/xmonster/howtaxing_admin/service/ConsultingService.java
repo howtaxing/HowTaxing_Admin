@@ -1,9 +1,12 @@
 package com.xmonster.howtaxing_admin.service;
 
 import com.xmonster.howtaxing_admin.CustomException;
+import com.xmonster.howtaxing_admin.dto.common.ApiResponse;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse;
-import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse.ConsultingDateInfoResponse;
-import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse.ConsultingAvailableTimeInfoResponse;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse.ConsultingDateInfo;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse.ConsultingAvailableTimeInfo;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleWeekInfoResponse;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleWeekInfoResponse.ConsultingEachDateInfo;
 import com.xmonster.howtaxing_admin.model.ConsultingScheduleId;
 import com.xmonster.howtaxing_admin.model.ConsultingScheduleManagement;
 import com.xmonster.howtaxing_admin.repository.consulting.ConsultantInfoRepository;
@@ -37,7 +40,55 @@ public class ConsultingService {
     private final static String THIS_WEEK = "this";
     private final static String PREVIOUS_WEEK = "previous";
     private final static String NEXT_WEEK = "next";
+    private final static String PREVIOUS = "previous";
+    private final static String NEXT = "next";
     private final static String DATE = "date";
+
+    public Object getConsultingScheduleWeekInfo(Long consultantId, String currentWeekStartDate, String action){
+
+        LocalDate baseDate = LocalDate.now();
+
+        if(currentWeekStartDate != null) {
+            LocalDate curWeekStDt = LocalDate.parse(currentWeekStartDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if(PREVIOUS.equals(action)){
+                baseDate = curWeekStDt.minusWeeks(1);
+            }else if(NEXT.equals(action)){
+                baseDate = curWeekStDt.plusWeeks(1);
+            }
+        }
+
+        List<ConsultingEachDateInfo> consultingEachDateInfoList = getConsultingWeekInfo(baseDate);
+        LocalDate startDate = consultingEachDateInfoList.get(0).getDate();
+        LocalDate endDate = consultingEachDateInfoList.get(consultingEachDateInfoList.size()-1).getDate();
+
+        String consultingWeekInfo = startDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) + " ~ " + endDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+
+        // 상담일정관리정보 DB조회
+        List<ConsultingScheduleManagement> consultingScheduleManagementList
+                = consultingScheduleManagementRepository.findByConsultantIdFromStartDateToEndDate(consultantId, startDate, endDate);
+
+        if(consultingScheduleManagementList != null){
+            if(consultingEachDateInfoList.size() == consultingScheduleManagementList.size() &&
+                    startDate.equals(consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate())){
+                for(int i=0; i<consultingEachDateInfoList.size(); i++){
+                    // 예약가능여부 세팅
+                    consultingEachDateInfoList.get(i).setIsReservationAvailable(consultingScheduleManagementList.get(i).getIsReservationAvailable());
+
+                    // 선택여부 세팅
+                    if(baseDate.equals(consultingEachDateInfoList.get(i).getDate())){
+                        consultingEachDateInfoList.get(i).setIsSelected(true);
+                    }
+                }
+            }
+        }
+
+        return ApiResponse.success(
+                ConsultingScheduleWeekInfoResponse.builder()
+                        .consultantId(consultantId)
+                        .consultingWeekInfo(consultingWeekInfo)
+                        .consultingEachDateInfoList(consultingEachDateInfoList)
+                        .build());
+    }
 
     // 상담일정정보 조회
     public Object getConsultingScheduleInfo(Long consultantId, String searchWeek, LocalDate searchDate) throws Exception {
@@ -63,13 +114,13 @@ public class ConsultingService {
 
         LocalDate baseDate = null;
         String consultingWeekInfo = EMPTY;
-        List<ConsultingDateInfoResponse> consultingDateInfoResponseList = null;
+        List<ConsultingDateInfo> consultingDateInfoResponseList = null;
         boolean isReservationAvailable = false;
         String reservationAvailableStartTimeHour = EMPTY;
         String reservationAvailableStartTimeMinute = EMPTY;
         String reservationAvailableEndTimeHour = EMPTY;
         String reservationAvailableEndTimeMinute = EMPTY;
-        List<ConsultingAvailableTimeInfoResponse> consultingAvailableTimeInfoResponseList = null;
+        List<ConsultingAvailableTimeInfo> consultingAvailableTimeInfoResponseList = null;
 
         // 이번주 정보 조회
         if(EMPTY.equals(searchWeek) || THIS_WEEK.equals(searchWeek)){
@@ -84,7 +135,7 @@ public class ConsultingService {
             // 특정일자 조회 X
             if(searchDate == null){
                 baseDate = LocalDate.now();
-                consultingDateInfoResponseList = getConsultingWeekInfo(baseDate);
+                consultingDateInfoResponseList = getConsultingWeekInfo2(baseDate);
 
                 LocalDate startDate = consultingDateInfoResponseList.get(0).getDate();
                 LocalDate endDate = consultingDateInfoResponseList.get(consultingDateInfoResponseList.size()-1).getDate();
@@ -159,8 +210,40 @@ public class ConsultingService {
 
     }
 
-    private List<ConsultingDateInfoResponse> getConsultingWeekInfo(LocalDate baseDate){
-        List<ConsultingDateInfoResponse> consultingDateInfoResponseList = new ArrayList<>();
+    private List<ConsultingEachDateInfo> getConsultingWeekInfo(LocalDate baseDate){
+        List<ConsultingEachDateInfo> consultingEachDateInfoList = new ArrayList<>();
+        LocalDate startDate = getStartDate(baseDate, baseDate.getDayOfWeek());
+
+        for(int i=0; i<7; i++){
+            LocalDate date = startDate.plusDays(i);
+            String dateStr = String.format("%02d", date.getDayOfMonth());
+            String dayOfWeekStr = "토요일";
+
+            switch (i){
+                case 1: dayOfWeekStr = "일요일";
+                case 2: dayOfWeekStr = "월요일";
+                case 3: dayOfWeekStr = "화요일";
+                case 4: dayOfWeekStr = "수요일";
+                case 5: dayOfWeekStr = "목요일";
+                case 6: dayOfWeekStr = "금요일";
+                default: dayOfWeekStr = "토요일";
+            }
+
+            consultingEachDateInfoList.add(
+                    ConsultingEachDateInfo.builder()
+                            .date(date)
+                            .dateStr(dateStr)
+                            .dayOfWeekStr(dayOfWeekStr)
+                            .isReservationAvailable(false)
+                            .isSelected(false)
+                            .build());
+        }
+
+        return consultingEachDateInfoList;
+    }
+
+    private List<ConsultingDateInfo> getConsultingWeekInfo2(LocalDate baseDate){
+        List<ConsultingDateInfo> consultingDateInfoResponseList = new ArrayList<>();
         LocalDate startDate = getStartDate(baseDate, baseDate.getDayOfWeek());
 
         for(int i=0; i<7; i++){
@@ -179,7 +262,7 @@ public class ConsultingService {
             }
 
             consultingDateInfoResponseList.add(
-                    ConsultingDateInfoResponse.builder()
+                    ConsultingDateInfo.builder()
                             .date(date)
                             .dateStr(dateStr)
                             .dayOfWeekStr(dayOfWeekStr)
@@ -192,9 +275,10 @@ public class ConsultingService {
     }
 
     private LocalDate getStartDate(LocalDate baseDate, DayOfWeek baseDayOfWeek) {
-        LocalDate startDate = baseDate;
+        LocalDate startDate = null;
 
-        if(DayOfWeek.SUNDAY.equals(baseDayOfWeek)) startDate = baseDate.minusDays(1);
+        if(DayOfWeek.SATURDAY.equals(baseDayOfWeek)) startDate = baseDate;
+        else if(DayOfWeek.SUNDAY.equals(baseDayOfWeek)) startDate = baseDate.minusDays(1);
         else if(DayOfWeek.MONDAY.equals(baseDayOfWeek)) startDate = baseDate.minusDays(2);
         else if(DayOfWeek.TUESDAY.equals(baseDayOfWeek)) startDate = baseDate.minusDays(3);
         else if(DayOfWeek.WEDNESDAY.equals(baseDayOfWeek)) startDate = baseDate.minusDays(4);
