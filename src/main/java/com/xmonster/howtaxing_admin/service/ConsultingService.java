@@ -2,11 +2,15 @@ package com.xmonster.howtaxing_admin.service;
 
 import com.xmonster.howtaxing_admin.CustomException;
 import com.xmonster.howtaxing_admin.dto.common.ApiResponse;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoResponse;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse.ConsultingDateInfo;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleInfoResponse.ConsultingAvailableTimeInfo;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleWeekInfoResponse;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleWeekInfoResponse.ConsultingEachDateInfo;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoResponse;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoResponse.ConsultingEachTimeInfo;
+import com.xmonster.howtaxing_admin.model.ConsultingReservationInfo;
 import com.xmonster.howtaxing_admin.model.ConsultingScheduleId;
 import com.xmonster.howtaxing_admin.model.ConsultingScheduleManagement;
 import com.xmonster.howtaxing_admin.repository.consulting.ConsultantInfoRepository;
@@ -22,6 +26,7 @@ import javax.transaction.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +49,9 @@ public class ConsultingService {
     private final static String NEXT = "next";
     private final static String DATE = "date";
 
+    // 상담일정 주정보 조회
     public Object getConsultingScheduleWeekInfo(Long consultantId, String currentWeekStartDate, String action){
+        log.info(">> [Service]ConsultingService getConsultingScheduleWeekInfo - 상담일정 주정보 조회");
 
         LocalDate baseDate = LocalDate.now();
 
@@ -67,37 +74,26 @@ public class ConsultingService {
         List<ConsultingScheduleManagement> consultingScheduleManagementList
                 = consultingScheduleManagementRepository.findByConsultantIdFromStartDateToEndDate(consultantId, startDate, endDate);
 
-        if(consultingScheduleManagementList != null){
-            log.info("consultingEachDateInfoList.size() : " + consultingEachDateInfoList.size());
-            log.info("consultingScheduleManagementList.size() : " + consultingScheduleManagementList.size());
-            log.info("startDate : " + startDate);
-            log.info("consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate() : " + consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate());
-
-            if(consultingEachDateInfoList.size() == consultingScheduleManagementList.size() &&
-                    startDate.equals(consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate())){
-                for(int i=0; i<consultingEachDateInfoList.size(); i++){
-                    // 예약가능여부 세팅
-                    consultingEachDateInfoList.get(i).setIsReservationAvailable(consultingScheduleManagementList.get(i).getIsReservationAvailable());
-
-                    // 선택여부 세팅
-                    if(baseDate.equals(consultingEachDateInfoList.get(i).getDate())){
-                        log.info("baseDate : " + baseDate);
-                        log.info("consultingEachDateInfoList.get(i).getDate() : " + consultingEachDateInfoList.get(i).getDate());
-                        consultingEachDateInfoList.get(i).setIsSelected(true);
+        // 예약가능여부 세팅
+        if(consultingScheduleManagementList != null && !consultingScheduleManagementList.isEmpty()){
+            if(startDate.equals(consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate())){
+                for(int i=0; i<consultingScheduleManagementList.size(); i++){
+                    ConsultingScheduleManagement consultingScheduleManagement = consultingScheduleManagementList.get(i);
+                    if(consultingScheduleManagement.getIsReservationAvailable()){
+                        consultingEachDateInfoList.get(i).setIsReservationAvailable(true);
                     }
                 }
             }
         }
 
-        log.info("----- consultingEachDateInfoList START -----");
-        for(ConsultingEachDateInfo consultingEachDateInfo : consultingEachDateInfoList){
-            log.info("date : " + consultingEachDateInfo.getDate());
-            log.info("dateStr : " + consultingEachDateInfo.getDateStr());
-            log.info("dayOfWeekStr : " + consultingEachDateInfo.getDayOfWeekStr());
-            log.info("isReservationAvailable : " + consultingEachDateInfo.getIsReservationAvailable());
-            log.info("isSelected : " + consultingEachDateInfo.getIsSelected());
+        // 선택여부 세팅
+        if(consultingEachDateInfoList != null && !consultingEachDateInfoList.isEmpty()){
+            for(int i=0; i<consultingEachDateInfoList.size(); i++){
+                if(baseDate.equals(consultingEachDateInfoList.get(i).getDate())){
+                    consultingEachDateInfoList.get(i).setIsSelected(true);
+                }
+            }
         }
-        log.info("----- consultingEachDateInfoList END -----");
 
         return ApiResponse.success(
                 ConsultingScheduleWeekInfoResponse.builder()
@@ -105,6 +101,86 @@ public class ConsultingService {
                         .consultingWeekInfo(consultingWeekInfo)
                         .consultingEachDateInfoList(consultingEachDateInfoList)
                         .build());
+    }
+
+    // 상담일정 일자 정보 조회
+    public Object getConsultingScheduleDateInfo(Long consultantId, String searchDateStr){
+        log.info(">> [Service]ConsultingService getConsultingScheduleWeekInfo - 상담일정 일자정보 조회");
+
+        boolean isReservationAvailable = false;
+        String reservationAvailableStartTimeHour = EMPTY;
+        String reservationAvailableStartTimeMinute = EMPTY;
+        String reservationAvailableEndTimeHour = EMPTY;
+        String reservationAvailableEndTimeMinute = EMPTY;
+        List<ConsultingEachTimeInfo> consultingEachTimeInfoList = null;
+
+        LocalDate searchDate = LocalDate.parse(searchDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        ConsultingScheduleManagement consultingScheduleManagement =
+                consultingScheduleManagementRepository.findByConsultingScheduleId(
+                        ConsultingScheduleId.builder()
+                                .consultantId(consultantId)
+                                .reservationDate(searchDate)
+                                .build());
+
+        if(consultingScheduleManagement != null){
+            isReservationAvailable = consultingScheduleManagement.getIsReservationAvailable();
+
+            if(isReservationAvailable) {
+                LocalTime reservationAvailableStartTime = consultingScheduleManagement.getReservationAvailableStartTime();
+                LocalTime reservationAvailableEndTime = consultingScheduleManagement.getReservationAvailableEndTime();
+
+                if(reservationAvailableStartTime != null && reservationAvailableEndTime != null){
+                    reservationAvailableStartTimeHour = String.format("%02d", reservationAvailableStartTime.getHour());
+                    reservationAvailableStartTimeMinute = String.format("%02d", reservationAvailableStartTime.getMinute());
+                    reservationAvailableEndTimeHour = String.format("%02d", reservationAvailableEndTime.getHour());
+                    reservationAvailableEndTimeMinute = String.format("%02d", reservationAvailableEndTime.getMinute());
+
+                    Integer reservationTimeUnit = consultingScheduleManagement.getReservationTimeUnit();
+                    if(reservationTimeUnit != null && reservationAvailableStartTime.isBefore(reservationAvailableEndTime)){
+                        consultingEachTimeInfoList = new ArrayList<>();
+                        LocalTime consultingTime = reservationAvailableStartTime;
+
+                        while(consultingTime.equals(reservationAvailableEndTime)){
+                            consultingEachTimeInfoList.add(
+                                    ConsultingEachTimeInfo.builder()
+                                            .consultingTime(consultingTime.format(DateTimeFormatter.ofPattern("HH:mm")))
+                                            .consultingTimeUnit(reservationTimeUnit)
+                                            .reservationStatus(ONE)
+                                            .build());
+                            consultingTime.plusMinutes(reservationTimeUnit);
+                        }
+                    }
+                }
+
+                // 1:예약대기
+                // 2:예약완료
+                // 3:예약불가
+
+                List<ConsultingReservationInfo> consultingReservationInfoList =
+                        consultingReservationInfoRepository.findByReservationDate(searchDate);
+
+                if(consultingReservationInfoList !=null && !consultingReservationInfoList.isEmpty()){
+                    // GGMANYAR
+                }
+
+                String reservationUnavailableTimeStr = consultingScheduleManagement.getReservationUnavailableTime();
+                String[] reservationUnavailableTimeArr = null;
+                if(StringUtils.isNotBlank(reservationUnavailableTimeStr)){
+                    reservationUnavailableTimeArr = reservationUnavailableTimeStr.split(",");
+                }
+
+                if(reservationUnavailableTimeArr != null && reservationUnavailableTimeArr.length > 0){
+                    for(int i=0; i<reservationUnavailableTimeArr.length; i++){
+
+                    }
+                }
+            }
+        }
+
+
+
+        return null;
     }
 
     // 상담일정정보 조회
@@ -237,12 +313,12 @@ public class ConsultingService {
             String dayOfWeekStr = "토요일";
 
             switch (i){
-                case 1: dayOfWeekStr = "일요일";
-                case 2: dayOfWeekStr = "월요일";
-                case 3: dayOfWeekStr = "화요일";
-                case 4: dayOfWeekStr = "수요일";
-                case 5: dayOfWeekStr = "목요일";
-                case 6: dayOfWeekStr = "금요일";
+                case 1: dayOfWeekStr = "일요일"; break;
+                case 2: dayOfWeekStr = "월요일"; break;
+                case 3: dayOfWeekStr = "화요일"; break;
+                case 4: dayOfWeekStr = "수요일"; break;
+                case 5: dayOfWeekStr = "목요일"; break;
+                case 6: dayOfWeekStr = "금요일"; break;
                 default: dayOfWeekStr = "토요일";
             }
 

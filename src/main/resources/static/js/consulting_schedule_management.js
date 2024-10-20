@@ -68,12 +68,12 @@ $(document).ready(function(){
 
     // 상담날짜선택 이전 날짜 보기
     $("#date_arrow_left").click(function(){
-
+        getConsultingScheduleWeekInfo(1, $("#date_1").val(), "previous");
     });
 
     // 상담날짜선택 이후 날짜 보기
     $("#date_arrow_right").click(function(){
-
+        getConsultingScheduleWeekInfo(1, $("#date_1").val(), "next");
     });
 
     init();
@@ -81,8 +81,9 @@ $(document).ready(function(){
 
 function init() {
     // 1. 상담날짜 선택 초기화
-    $('.date[date-index=3]').addClass('clicked');
-    $('.date[date-index=6]').addClass('disabled');
+    getConsultingScheduleWeekInfo();
+    //$('.date[date-index=3]').addClass('clicked');
+    //$('.date[date-index=6]').addClass('disabled');
 
     // 2. 상담 상세 설정 초기화
     $('.each_time[time-index=0]').addClass('clicked');
@@ -93,12 +94,25 @@ function init() {
     $('.each_time[time-index=13]').addClass('disabled');
 
     // 3. 상담 불가 시간 설정 초기화
-    getConsultingScheduleWeekInfo();
+
 }
 
-function getConsultingScheduleWeekInfo() {
+function initConsultingScheuduleWeekInfo(){
+    for(let i=0; i<7; i++) {
+        $('.date[date-index='+i+']').addClass('disabled');
+        $('.date[date-index='+i+']').removeClass('clicked');
+    }
+}
+
+function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, action) {
+    console.log("getConsultingScheduleWeekInfo called");
+
+    initConsultingScheuduleWeekInfo();
+
     const params = {};
-    params.consultantId = 1;
+    params.consultantId = nullChk(consultantId) ? consultantId : 1;
+    if(nullChk(currentWeekStartDate)) params.currentWeekStartDate = currentWeekStartDate;
+    if(nullChk(action)) params.action = action;
 
     $.ajax({
         type: "GET",
@@ -113,17 +127,31 @@ function getConsultingScheduleWeekInfo() {
                 const data = ret.data;
 
                 if(errYn === "N"){
-                    //alert("HAPPY");
-                    //$("#period").val(data.consultingWeekInfo);
                     $("#period").text(data.consultingWeekInfo);
                     const list = data.consultingEachDateInfoList;
+
                     if(list != null && list.length > 0){
                         for(let i=0; i<list.length; i++) {
-                            $("#dateStr_"+(i+1)).text(list[i].dateStr);
-                            $("#dayOfWeekStr_"+(i+1)).text(list[i].dayOfWeekStr);
-                            $("#date_"+(i+1)).val(list[i].date);
+                            const dateStr = list[i].dateStr;
+                            const dayOfWeekStr = list[i].dayOfWeekStr;
+                            const date = list[i].date;
+                            const isReservationAvailable = list[i].isReservationAvailable;
+                            const isSelected = list[i].isSelected;
+                            const seq = i+1;
 
-                            console.log("date2 : " + $("#date_"+(i+1)).val());
+                            $("#dateStr_"+seq).text(dateStr);
+                            $("#dayOfWeekStr_"+seq).text(dayOfWeekStr);
+                            $("#date_"+seq).val(date);
+
+                            // 예약가능여부 세팅
+                            if(isReservationAvailable){
+                                $('.date[date-index='+i+']').removeClass('disabled');
+                            }
+
+                            // Default 선택 날짜 세팅
+                            if(isSelected){
+                                $('.date[date-index='+i+']').addClass('clicked');
+                            }
                         }
                     }
                 }else{

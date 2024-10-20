@@ -17,12 +17,12 @@ import java.util.Map;
 public class ConsultingController {
     private final ConsultingService consultingService;
 
-    // 상담 일정 주 정보 조회
+    // 상담일정 주정보 조회
     @GetMapping("/consulting/weekInfo")
     public Object getConsultingScheduleWeekInfo(@RequestParam(value="consultantId") Long consultantId,
                                                 @RequestParam(value="currentWeekStartDate", required = false) String currentWeekStartDate,
                                                 @RequestParam(value="action", required = false) String action) throws Exception {
-        log.info(">> [Controller]ConsultingController getConsultingScheduleWeekInfo - 상담 일정 주 정보 조회");
+        log.info(">> [Controller]ConsultingController getConsultingScheduleWeekInfo - 상담일정 주정보 조회");
         return consultingService.getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, action);
     }
 }
