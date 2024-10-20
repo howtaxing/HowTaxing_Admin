@@ -50,7 +50,7 @@ public class ConsultingService {
     private final static String DATE = "date";
 
     // 상담일정 주정보 조회
-    public Object getConsultingScheduleWeekInfo(Long consultantId, String currentWeekStartDate, String action){
+    public Object getConsultingScheduleWeekInfo(Long consultantId, String currentWeekStartDate, String action) throws Exception{
         log.info(">> [Service]ConsultingService getConsultingScheduleWeekInfo - 상담일정 주정보 조회");
 
         LocalDate baseDate = LocalDate.now();
@@ -63,6 +63,8 @@ public class ConsultingService {
                 baseDate = curWeekStDt.plusWeeks(1);
             }
         }
+
+        log.info("baseDate : " + baseDate);
 
         List<ConsultingEachDateInfo> consultingEachDateInfoList = getConsultingWeekInfo(baseDate);
         LocalDate startDate = consultingEachDateInfoList.get(0).getDate();
@@ -77,17 +79,27 @@ public class ConsultingService {
         // 예약가능여부 세팅
         if(consultingScheduleManagementList != null && !consultingScheduleManagementList.isEmpty()){
             if(startDate.equals(consultingScheduleManagementList.get(0).getConsultingScheduleId().getReservationDate())){
-                for(int i=0; i<consultingScheduleManagementList.size(); i++){
+                for(ConsultingScheduleManagement consultingScheduleManagement : consultingScheduleManagementList){
+                    LocalDate reservationDate = consultingScheduleManagement.getConsultingScheduleId().getReservationDate();
+
+                    for(ConsultingEachDateInfo consultingEachDateInfo : consultingEachDateInfoList){
+                        LocalDate consultingDate = consultingEachDateInfo.getDate();
+                        if(consultingDate.equals(reservationDate)){
+                            consultingEachDateInfo.setIsReservationAvailable(consultingScheduleManagement.getIsReservationAvailable());
+                        }
+                    }
+                }
+                /*for(int i=0; i<consultingScheduleManagementList.size(); i++){
                     ConsultingScheduleManagement consultingScheduleManagement = consultingScheduleManagementList.get(i);
                     if(consultingScheduleManagement.getIsReservationAvailable()){
                         consultingEachDateInfoList.get(i).setIsReservationAvailable(true);
                     }
-                }
+                }*/
             }
         }
 
         // 선택여부 세팅
-        if(consultingEachDateInfoList != null && !consultingEachDateInfoList.isEmpty()){
+        if(!consultingEachDateInfoList.isEmpty()){
             for(int i=0; i<consultingEachDateInfoList.size(); i++){
                 if(baseDate.equals(consultingEachDateInfoList.get(i).getDate())){
                     consultingEachDateInfoList.get(i).setIsSelected(true);
@@ -103,8 +115,8 @@ public class ConsultingService {
                         .build());
     }
 
-    // 상담일정 일자 정보 조회
-    public Object getConsultingScheduleDateInfo(Long consultantId, String searchDateStr){
+    // 상담일정 일자정보 조회
+    public Object getConsultingScheduleDateInfo(Long consultantId, String searchDateStr) throws Exception {
         log.info(">> [Service]ConsultingService getConsultingScheduleWeekInfo - 상담일정 일자정보 조회");
 
         boolean isReservationAvailable = false;
@@ -115,6 +127,9 @@ public class ConsultingService {
         List<ConsultingEachTimeInfo> consultingEachTimeInfoList = null;
 
         LocalDate searchDate = LocalDate.parse(searchDateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        log.info("[GGMANYAR]consultantId : " + consultantId);
+        log.info("[GGMANYAR]searchDate : " + searchDate);
 
         ConsultingScheduleManagement consultingScheduleManagement =
                 consultingScheduleManagementRepository.findByConsultingScheduleId(
@@ -141,46 +156,68 @@ public class ConsultingService {
                         consultingEachTimeInfoList = new ArrayList<>();
                         LocalTime consultingTime = reservationAvailableStartTime;
 
-                        while(consultingTime.equals(reservationAvailableEndTime)){
+                        while(!consultingTime.equals(reservationAvailableEndTime)){
                             consultingEachTimeInfoList.add(
                                     ConsultingEachTimeInfo.builder()
                                             .consultingTime(consultingTime.format(DateTimeFormatter.ofPattern("HH:mm")))
                                             .consultingTimeUnit(reservationTimeUnit)
-                                            .reservationStatus(ONE)
+                                            .reservationStatus(ONE) // 일단 상담시간에 예약대기:'1' 세팅(예약완료와 예약불가 값은 하단에서 세팅)
                                             .build());
-                            consultingTime.plusMinutes(reservationTimeUnit);
+                            consultingTime = consultingTime.plusMinutes(reservationTimeUnit);
                         }
                     }
                 }
 
-                // 1:예약대기
-                // 2:예약완료
-                // 3:예약불가
-
+                // 선택한 상담자의 예약내역을 조회하여 이미 예약된 상담시간에 예약완료:'2' 세팅
                 List<ConsultingReservationInfo> consultingReservationInfoList =
-                        consultingReservationInfoRepository.findByReservationDate(searchDate);
+                        consultingReservationInfoRepository.findByReservationDate(consultantId, searchDate);
 
                 if(consultingReservationInfoList !=null && !consultingReservationInfoList.isEmpty()){
-                    // GGMANYAR
+                    for(ConsultingReservationInfo consultingReservationInfo : consultingReservationInfoList){
+                        LocalTime reservationStartTime = consultingReservationInfo.getReservationStartTime();
+
+                        if(consultingEachTimeInfoList != null && !consultingEachTimeInfoList.isEmpty()){
+                            for(ConsultingEachTimeInfo consultingEachTimeInfo : consultingEachTimeInfoList){
+                                LocalTime consultingTime = LocalTime.parse(consultingEachTimeInfo.getConsultingTime(), DateTimeFormatter.ofPattern("HH:mm"));
+                                if(consultingTime.equals(reservationStartTime)){
+                                    consultingEachTimeInfo.setReservationStatus(TWO);
+                                }
+                            }
+                        }
+                    }
                 }
 
+                // 선택한 상담자의 상담일정을 조회하여 상담불가인 상담시간에 예약불가:'3' 세팅
                 String reservationUnavailableTimeStr = consultingScheduleManagement.getReservationUnavailableTime();
                 String[] reservationUnavailableTimeArr = null;
                 if(StringUtils.isNotBlank(reservationUnavailableTimeStr)){
                     reservationUnavailableTimeArr = reservationUnavailableTimeStr.split(",");
                 }
 
-                if(reservationUnavailableTimeArr != null && reservationUnavailableTimeArr.length > 0){
-                    for(int i=0; i<reservationUnavailableTimeArr.length; i++){
-
+                if(reservationUnavailableTimeArr != null){
+                    for (String unavailableTime : reservationUnavailableTimeArr) {
+                        if (consultingEachTimeInfoList != null && !consultingEachTimeInfoList.isEmpty()) {
+                            for (ConsultingEachTimeInfo consultingEachTimeInfo : consultingEachTimeInfoList) {
+                                String consultingTime = StringUtils.defaultString(consultingEachTimeInfo.getConsultingTime());
+                                if (consultingTime.equals(unavailableTime)) {
+                                    consultingEachTimeInfo.setReservationStatus(THREE);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
 
-
-
-        return null;
+        return ApiResponse.success(
+                ConsultingScheduleDateInfoResponse.builder()
+                        .isReservationAvailable(isReservationAvailable)
+                        .reservationAvailableStartTimeHour(reservationAvailableStartTimeHour)
+                        .reservationAvailableStartTimeMinute(reservationAvailableStartTimeMinute)
+                        .reservationAvailableEndTimeHour(reservationAvailableEndTimeHour)
+                        .reservationAvailableEndTimeMinute(reservationAvailableEndTimeMinute)
+                        .consultingEachTimeInfoList(consultingEachTimeInfoList)
+                        .build());
     }
 
     // 상담일정정보 조회

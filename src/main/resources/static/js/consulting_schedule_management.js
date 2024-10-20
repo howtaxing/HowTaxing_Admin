@@ -1,3 +1,5 @@
+let consultingEachTimeInfoList = null;
+
 $(document).ready(function(){
     gnb3_On();
     side3_On();
@@ -28,6 +30,7 @@ $(document).ready(function(){
         $('.date[date-index!=' + index + ']').removeClass('clicked');
 
         const selectedDate = $("#date_"+(parseInt(index)+1)).val();
+        getConsultingScheduleDateInfo(1, selectedDate);
         console.log("selectedDate : " + selectedDate);
     });
 
@@ -36,8 +39,13 @@ $(document).ready(function(){
         $(this).attr('time-index', index);
     }).click(function(){
         var index = $(this).attr('time-index');
-        $('.each_time[time-index=' + index + ']').addClass('clicked');
-        $('.each_time[time-index!=' + index + ']').removeClass('clicked');
+        if($('.each_time[time-index=' + index + ']').hasClass('clicked') === true){
+            $('.each_time[time-index=' + index + ']').removeClass('clicked');
+        }else{
+            $('.each_time[time-index=' + index + ']').addClass('clicked');
+        }
+        //$('.each_time[time-index=' + index + ']').addClass('clicked');
+        //$('.each_time[time-index!=' + index + ']').removeClass('clicked');
     });
 
     /**
@@ -76,26 +84,37 @@ $(document).ready(function(){
         getConsultingScheduleWeekInfo(1, $("#date_1").val(), "next");
     });
 
-    init();
+    $("#is_reservation_available_sel").change(function(){
+        if($("#is_reservation_available_sel").val() === "0"){
+            $("#start_hour_sel").prop("disabled", true);
+            $("#start_minute_sel").prop("disabled", true);
+            $("#end_hour_sel").prop("disabled", true);
+            $("#end_minute_sel").prop("disabled", true);
+
+            $('.each_time').each(function(index){
+                if($('.each_time[time-index=' + index + ']').hasClass('disabled') === false){
+                    $('.each_time[time-index=' + index + ']').addClass('disabled');
+                }
+            });
+        }else{
+            $("#start_hour_sel").prop("disabled", false);
+            $("#start_minute_sel").prop("disabled", false);
+            $("#end_hour_sel").prop("disabled", false);
+            $("#end_minute_sel").prop("disabled", false);
+
+            // 상담불가시간설정 세팅
+            setConsultingUnavailableTime();
+            /*$('.each_time').each(function(index){
+                if($('.each_time[time-index=' + index + ']').hasClass('disabled') === true){
+                    $('.each_time[time-index=' + index + ']').removeClass('disabled');
+                }
+            });*/
+        }
+    });
+
+    // 상담날짜 선택 초기화
+    getConsultingScheduleWeekInfo(1, null, null);
 });
-
-function init() {
-    // 1. 상담날짜 선택 초기화
-    getConsultingScheduleWeekInfo();
-    //$('.date[date-index=3]').addClass('clicked');
-    //$('.date[date-index=6]').addClass('disabled');
-
-    // 2. 상담 상세 설정 초기화
-    $('.each_time[time-index=0]').addClass('clicked');
-    $('.each_time[time-index=3]').addClass('disabled');
-    $('.each_time[time-index=7]').addClass('disabled');
-    $('.each_time[time-index=10]').addClass('disabled');
-    $('.each_time[time-index=12]').addClass('disabled');
-    $('.each_time[time-index=13]').addClass('disabled');
-
-    // 3. 상담 불가 시간 설정 초기화
-
-}
 
 function initConsultingScheuduleWeekInfo(){
     for(let i=0; i<7; i++) {
@@ -120,7 +139,7 @@ function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, actio
         contentType : "application/json",
         data: params,
         success:function(ret){
-            console.log("상담 일정 주 정보 조회 : " + JSON.stringify(ret));
+            console.log("상담일정 주정보 조회 : " + JSON.stringify(ret));
 
             if(nullChk(ret) && nullChk(ret.errYn) && nullChk(ret.data)){
                 const errYn = ret.errYn;
@@ -128,6 +147,117 @@ function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, actio
 
                 if(errYn === "N"){
                     $("#period").text(data.consultingWeekInfo);
+                    const list = data.consultingEachDateInfoList;
+                    let selectedDate = "";
+
+                    if(list != null && list.length > 0){
+                        for(let i=0; i<list.length; i++) {
+                            const dateStr = list[i].dateStr;
+                            const dayOfWeekStr = list[i].dayOfWeekStr;
+                            const date = list[i].date;
+                            const isReservationAvailable = list[i].isReservationAvailable;
+                            const isSelected = list[i].isSelected;
+                            const seq = i+1;
+
+                            $("#dateStr_"+seq).text(dateStr);
+                            $("#dayOfWeekStr_"+seq).text(dayOfWeekStr);
+                            $("#date_"+seq).val(date);
+
+                            // 예약가능여부 세팅
+                            if(isReservationAvailable){
+                                $('.date[date-index='+i+']').removeClass('disabled');
+                            }
+
+                            // Default 선택 날짜 세팅
+                            if(isSelected){
+                                $('.date[date-index='+i+']').addClass('clicked');
+                                selectedDate = date;
+                            }
+                        }
+
+                        getConsultingScheduleDateInfo(consultantId, selectedDate);
+                    }
+                }else{
+                    alert("ERROR-1");
+                }
+            }else{
+                alert("ERROR-2");
+            }
+        },
+        error:function(e){
+            console.log("오류가 발생했습니다 - " + JSON.stringify(e));
+            alert("ERROR-3");
+        }
+    });
+}
+
+function initConsultingScheuduleDateInfo(){
+    $("#is_reservation_available_sel").val("0");
+    $("#start_hour_sel").prop("disabled", true);
+    $("#start_minute_sel").prop("disabled", true);
+    $("#end_hour_sel").prop("disabled", true);
+    $("#end_minute_sel").prop("disabled", true);
+
+    $('.each_time').each(function(index){
+        $('.each_time[time-index=' + index + ']').addClass('disabled');
+    })
+}
+
+function getConsultingScheduleDateInfo(consultantId, searchDate) {
+    console.log("getConsultingScheduleDateInfo called");
+
+    initConsultingScheuduleDateInfo();
+
+    const params = {};
+    params.consultantId = nullChk(consultantId) ? consultantId : 1;
+    params.searchDate = searchDate;
+
+    $.ajax({
+        type: "GET",
+        url: "/consulting/dateInfo",
+        contentType : "application/json",
+        data: params,
+        success:function(ret){
+            console.log("상담일정 일자정보 조회 : " + JSON.stringify(ret));
+
+            if(nullChk(ret) && nullChk(ret.errYn) && nullChk(ret.data)){
+                const errYn = ret.errYn;
+                const data = ret.data;
+
+                if(errYn === "N"){
+                    const isReservationAvailable = data.isReservationAvailable;
+                    const reservationAvailableStartTimeHour = data.reservationAvailableStartTimeHour;
+                    const reservationAvailableStartTimeMinute = data.reservationAvailableStartTimeMinute;
+                    const reservationAvailableEndTimeHour = data.reservationAvailableEndTimeHour;
+                    const reservationAvailableEndTimeMinute = data.reservationAvailableEndTimeMinute;
+                    consultingEachTimeInfoList = data.consultingEachTimeInfoList;
+
+                    // 예약가능여부 세팅
+                    if(isReservationAvailable){
+                        $("#is_reservation_available_sel").val("1");
+
+                        $("#start_hour_sel").prop("disabled", false);
+                        $("#start_minute_sel").prop("disabled", false);
+                        $("#end_hour_sel").prop("disabled", false);
+                        $("#end_minute_sel").prop("disabled", false);
+                    }else{
+                        $("#is_reservation_available_sel").val("0");
+
+                        $("#start_hour_sel").prop("disabled", true);
+                        $("#start_minute_sel").prop("disabled", true);
+                        $("#end_hour_sel").prop("disabled", true);
+                        $("#end_minute_sel").prop("disabled", true);
+                    }
+                    
+                    // 상담시간설정 세팅
+                    $("#start_hour_sel").val(reservationAvailableStartTimeHour);
+                    $("#start_minute_sel").val(reservationAvailableStartTimeMinute);
+                    $("#end_hour_sel").val(reservationAvailableEndTimeHour);
+                    $("#end_minute_sel").val(reservationAvailableEndTimeMinute);
+                    
+                    // 상담불가시간설정 세팅
+                    setConsultingUnavailableTime();
+                    
                     const list = data.consultingEachDateInfoList;
 
                     if(list != null && list.length > 0){
@@ -166,6 +296,41 @@ function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, actio
             alert("ERROR-3");
         }
     });
+}
+
+// 상담불가시간설정 세팅
+function setConsultingUnavailableTime(){
+    if(consultingEachTimeInfoList != null && consultingEachTimeInfoList.length > 0){
+        for(let i=0; i<consultingEachTimeInfoList.length; i++){
+            const consultingTime = consultingEachTimeInfoList[i].consultingTime;
+            const consultingTimeUnit = consultingEachTimeInfoList[i].consultingTimeUnit;
+            const reservationStatus = consultingEachTimeInfoList[i].reservationStatus;
+
+            let consultingTimeStr = consultingTime.replace(':', '');
+
+            // 예약대기
+            if(reservationStatus === "1"){
+                if($("#time_"+consultingTimeStr).hasClass('disabled') === true){
+                    $("#time_"+consultingTimeStr).removeClass('disabled');
+                }
+            }
+            // 예약완료
+            else if(reservationStatus === "2"){
+                if($("#time_"+consultingTimeStr).hasClass('disabled') === false){
+                    $("#time_"+consultingTimeStr).addClass('disabled');
+                }
+            }
+            // 예약불가
+            else if(reservationStatus === "3"){
+                if($("#time_"+consultingTimeStr).hasClass('disabled') === true){
+                    $("#time_"+consultingTimeStr).removeClass('disabled');
+                }
+                if($("#time_"+consultingTimeStr).hasClass('clicked') === false){
+                    $("#time_"+consultingTimeStr).addClass('clicked');
+                }
+            }
+        }
+    }
 }
 
 function gnb2_On() {

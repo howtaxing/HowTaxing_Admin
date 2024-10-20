@@ -25,4 +25,12 @@ public class ConsultingController {
         log.info(">> [Controller]ConsultingController getConsultingScheduleWeekInfo - 상담일정 주정보 조회");
         return consultingService.getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, action);
     }
+
+    // 상담일정 일자정보 조회
+    @GetMapping("/consulting/dateInfo")
+    public Object getConsultingScheduleDateInfo(@RequestParam(value="consultantId") Long consultantId,
+                                                @RequestParam(value="searchDate") String searchDate) throws Exception {
+        log.info(">> [Controller]ConsultingController getConsultingScheduleDateInfo - 상담일정 일자정보 조회");
+        return consultingService.getConsultingScheduleDateInfo(consultantId, searchDate);
+    }
 }

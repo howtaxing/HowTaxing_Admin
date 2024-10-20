@@ -103,16 +103,7 @@
                                 <td style="padding-left: 20px;">상담시간설정</td>
                                 <td>
                                     <select class="small" id="start_hour_sel">
-                                        <option value="0">00</option>
-                                        <option value="1">01</option>
-                                        <option value="2">02</option>
-                                        <option value="3">03</option>
-                                        <option value="4">04</option>
-                                        <option value="5">05</option>
-                                        <option value="6">06</option>
-                                        <option value="7">07</option>
-                                        <option value="8">08</option>
-                                        <option value="9">09</option>
+                                        <option value="09">09</option>
                                         <option value="10">10</option>
                                         <option value="11">11</option>
                                         <option value="12">12</option>
@@ -122,28 +113,14 @@
                                         <option value="16">16</option>
                                         <option value="17">17</option>
                                         <option value="18">18</option>
-                                        <option value="19">19</option>
-                                        <option value="20">20</option>
-                                        <option value="21">21</option>
-                                        <option value="22">22</option>
-                                        <option value="23">23</option>
                                     </select>
                                     <select class="small" id="start_minute_sel">
-                                        <option value="0">00</option>
-                                        <option value="1">30</option>
+                                        <option value="00">00</option>
+                                        <option value="30">30</option>
                                     </select>
                                     <span class="ml10 mr10">부터</span>
                                     <select class="small" id="end_hour_sel">
-                                        <option value="0">00</option>
-                                        <option value="1">01</option>
-                                        <option value="2">02</option>
-                                        <option value="3">03</option>
-                                        <option value="4">04</option>
-                                        <option value="5">05</option>
-                                        <option value="6">06</option>
-                                        <option value="7">07</option>
-                                        <option value="8">08</option>
-                                        <option value="9">09</option>
+                                        <option value="09">09</option>
                                         <option value="10">10</option>
                                         <option value="11">11</option>
                                         <option value="12">12</option>
@@ -153,15 +130,10 @@
                                         <option value="16">16</option>
                                         <option value="17">17</option>
                                         <option value="18">18</option>
-                                        <option value="19">19</option>
-                                        <option value="20">20</option>
-                                        <option value="21">21</option>
-                                        <option value="22">22</option>
-                                        <option value="23">23</option>
                                     </select>
                                     <select class="small" id="end_minute_sel">
-                                        <option value="0">00</option>
-                                        <option value="1">30</option>
+                                        <option value="00">00</option>
+                                        <option value="30">30</option>
                                     </select>
                                     <span class="ml10 mr10">까지</span>
                                 </td>
@@ -176,40 +148,28 @@
                         <img th:src="@{/images/consulting_time.png}" style="width:40px; vertical-align:middle;"></img>
                         <span class="contents_small_title">상담 불가 시간 설정</span>
 
-                        <div class="select_time">
+                        <div class="select_time" id="select_time">
                             <div class="select_time_row">
-                                <span class="each_time">09:00</span>
-                                <span class="each_time">09:30</span>
-                                <span class="each_time">10:00</span>
-                                <span class="each_time">10:30</span>
-                                <span class="each_time">11:00</span>
-                                <span class="each_time">11:30</span>
-                                <span class="each_time">12:00</span>
-                                <span class="each_time">12:30</span>
-                                <span class="each_time">13:00</span>
-                                <span class="each_time">13:30</span>
+                                <span class="each_time" id="time_0900">09:00</span>
+                                <span class="each_time" id="time_0930">09:30</span>
+                                <span class="each_time" id="time_1000">10:00</span>
+                                <span class="each_time" id="time_1030">10:30</span>
+                                <span class="each_time" id="time_1100">11:00</span>
+                                <span class="each_time" id="time_1130">11:30</span>
+                                <span class="each_time" id="time_1200">12:00</span>
+                                <span class="each_time" id="time_1230">12:30</span>
+                                <span class="each_time" id="time_1300">13:00</span>
                             </div>
                             <div class="select_time_row">
-                                <span class="each_time">14:00</span>
-                                <span class="each_time">14:30</span>
-                                <span class="each_time">15:00</span>
-                                <span class="each_time">15:30</span>
-                                <span class="each_time">16:00</span>
-                                <span class="each_time">16:30</span>
-                                <span class="each_time">17:00</span>
-                                <span class="each_time">17:30</span>
-                                <span class="each_time">18:00</span>
-                                <span class="each_time">18:30</span>
-                            </div>
-                            <div class="select_time_row">
-                                <span class="each_time">19:00</span>
-                                <span class="each_time">19:30</span>
-                                <span class="each_time">20:00</span>
-                                <span class="each_time">20:30</span>
-                                <span class="each_time">21:00</span>
-                                <span class="each_time">21:30</span>
-                                <span class="each_time">22:00</span>
-                                <span class="each_time">22:30</span>
+                                <span class="each_time" id="time_1330">13:30</span>
+                                <span class="each_time" id="time_1400">14:00</span>
+                                <span class="each_time" id="time_1430">14:30</span>
+                                <span class="each_time" id="time_1500">15:00</span>
+                                <span class="each_time" id="time_1530">15:30</span>
+                                <span class="each_time" id="time_1600">16:00</span>
+                                <span class="each_time" id="time_1630">16:30</span>
+                                <span class="each_time" id="time_1700">17:00</span>
+                                <span class="each_time" id="time_1730">17:30</span>
                             </div>
                         </div>
                     </div>
