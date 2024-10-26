@@ -1,5 +1,6 @@
 package com.xmonster.howtaxing_admin.controller;
 
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoSaveRequest;
 import com.xmonster.howtaxing_admin.service.ConsultingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,5 +33,12 @@ public class ConsultingController {
                                                 @RequestParam(value="searchDate") String searchDate) throws Exception {
         log.info(">> [Controller]ConsultingController getConsultingScheduleDateInfo - 상담일정 일자정보 조회");
         return consultingService.getConsultingScheduleDateInfo(consultantId, searchDate);
+    }
+
+    // 상담일정 정보 저장
+    @PostMapping("/consulting/saveInfo")
+    public Object saveConsultingScheduleInfo(@RequestBody ConsultingScheduleDateInfoSaveRequest consultingScheduleDateInfoSaveRequest) throws Exception {
+        log.info(">> [Controller]ConsultingController saveConsultingScheduleInfo - 상담일정 정보 저장");
+        return consultingService.saveConsultingScheduleInfo(consultingScheduleDateInfoSaveRequest);
     }
 }

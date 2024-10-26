@@ -1,4 +1,6 @@
-let consultingEachTimeInfoList = null;
+let consultantId;
+let consultingTimeUnit;
+let consultingEachTimeInfoList;
 
 $(document).ready(function(){
     gnb3_On();
@@ -112,9 +114,17 @@ $(document).ready(function(){
         }
     });
 
-    // 상담날짜 선택 초기화
-    getConsultingScheduleWeekInfo(1, null, null);
+    initData();
 });
+
+function initData(){
+    consultantId = 1;
+    consultingTimeUnit = 30;
+    consultingEachTimeInfoList = null;
+
+    // 상담날짜 선택 초기화
+    getConsultingScheduleWeekInfo(consultantId, null, null);
+}
 
 function initConsultingScheuduleWeekInfo(){
     for(let i=0; i<7; i++) {
@@ -129,7 +139,7 @@ function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, actio
     initConsultingScheuduleWeekInfo();
 
     const params = {};
-    params.consultantId = nullChk(consultantId) ? consultantId : 1;
+    params.consultantId = consultantId;
     if(nullChk(currentWeekStartDate)) params.currentWeekStartDate = currentWeekStartDate;
     if(nullChk(action)) params.action = action;
 
@@ -199,6 +209,7 @@ function initConsultingScheuduleDateInfo(){
     $("#end_minute_sel").prop("disabled", true);
 
     $('.each_time').each(function(index){
+        $('.each_time[time-index=' + index + ']').removeClass('clicked');
         $('.each_time[time-index=' + index + ']').addClass('disabled');
     })
 }
@@ -209,7 +220,7 @@ function getConsultingScheduleDateInfo(consultantId, searchDate) {
     initConsultingScheuduleDateInfo();
 
     const params = {};
-    params.consultantId = nullChk(consultantId) ? consultantId : 1;
+    params.consultantId = consultantId;
     params.searchDate = searchDate;
 
     $.ajax({
@@ -331,6 +342,81 @@ function setConsultingUnavailableTime(){
             }
         }
     }
+}
+
+// GGMANYAR
+function saveData(){
+    let reservationDate = "";
+    let isReservationAvailable = false;
+    let reservationAvailableStartTime = "";
+    let reservationAvailableEndTime = "";
+    let reservationUnavailableTime = "";
+
+    for(let i=1; i<=7; i++){
+        if($("#dateStr_"+i).hasClass("clicked")){
+            reservationDate = $("#date_"+i).val();
+            break;
+        }
+    }
+    console.log("[GGMANYAR]reservationDate : " + reservationDate);
+
+    isReservationAvailable = $("#is_reservation_available_sel").val() !== "0";
+    console.log("[GGMANYAR]isReservationAvailable : " + isReservationAvailable);
+
+    reservationAvailableStartTime = $("#start_hour_sel").val() + ":" + $("#start_minute_sel").val() + ":00";
+    reservationAvailableEndTime = $("#end_hour_sel").val() + ":" + $("#end_minute_sel").val() + ":00";
+    console.log("[GGMANYAR]reservationAvailableStartTime : " + reservationAvailableStartTime);
+    console.log("[GGMANYAR]reservationAvailableEndTime : " + reservationAvailableEndTime);
+
+    $('.each_time').each(function(index){
+        if($('.each_time[time-index=' + index + ']').hasClass('clicked') === true){
+            if(nullChk(reservationUnavailableTime)){
+                reservationUnavailableTime += ",";
+            }
+            reservationUnavailableTime += $('.each_time[time-index=' + index + ']').text();
+        }
+    });
+    console.log("[GGMANYAR]reservationUnavailableTime : " + reservationUnavailableTime);
+
+    const params = {};
+    params.reservationDate = reservationDate;
+    params.consultantId = consultantId;
+    params.isReservationAvailable = true;
+    params.reservationAvailableStartTime = reservationAvailableStartTime;
+    params.reservationAvailableEndTime = reservationAvailableEndTime;
+    params.reservationTimeUnit = consultingTimeUnit;
+    params.reservationUnavailableTime = reservationUnavailableTime;
+
+    $.ajax({
+        type: "POST",
+        url: "/consulting/saveInfo",
+        contentType : "application/json",
+        data: JSON.stringify(params),
+        success:function(ret){
+            console.log("상담일정 정보 저장 : " + JSON.stringify(ret));
+
+            if(nullChk(ret) && nullChk(ret.errYn) && nullChk(ret.data)){
+                const errYn = ret.errYn;
+                const data = ret.data;
+
+                if(errYn === "N"){
+                    if(nullChk(data.result)){
+                        alert(data.result);
+                    }else{
+                        alert("상담 일정 저장 완료(메시지 출력 오류)");
+                    }
+                }else{
+                    alert("ERROR-1");
+                }
+            }else{
+                alert("ERROR-2");
+            }
+        },
+        error:function(e){
+            console.log("오류가 발생했습니다 - " + JSON.stringify(e));
+            alert("ERROR-3");
+        }
+    });
 }
 
 function gnb2_On() {
