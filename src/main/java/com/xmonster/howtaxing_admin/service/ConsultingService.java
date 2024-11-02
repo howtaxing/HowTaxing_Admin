@@ -146,7 +146,7 @@ public class ConsultingService {
                         consultingEachTimeInfoList = new ArrayList<>();
                         LocalTime consultingTime = reservationAvailableStartTime;
 
-                        while(!consultingTime.equals(reservationAvailableEndTime)){
+                        while(consultingTime.isBefore(reservationAvailableEndTime) || consultingTime.equals(reservationAvailableEndTime)){
                             consultingEachTimeInfoList.add(
                                     ConsultingEachTimeInfo.builder()
                                             .consultingTime(consultingTime.format(DateTimeFormatter.ofPattern("HH:mm")))

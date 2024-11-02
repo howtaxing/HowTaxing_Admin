@@ -1,17 +1,33 @@
 let consultantId;
 let consultingTimeUnit;
-let consultingEachTimeInfoList;
 let consultingScheduleDateInfo;
 
 $(document).ready(function(){
     gnb3_On();
     side3_On();
 
-    // 닫기
-    $(".popCloseBtn").click(function (){
-        $("#popup_layer").css("display", "none");
-    });
+    // 전역변수 초기화
+    initGlobalVariables();
 
+    // 이벤트 설정
+    setEvent();
+    
+    // 전체 데이터 및 컴포넌트 초기화
+    initAllDataAndComponent();
+
+    // 상담 날짜 선택 조회(오늘 날짜 기준)
+    getConsultingScheduleWeekInfo(consultantId, null, null);
+});
+
+// 전역변수 초기화
+function initGlobalVariables(){
+    consultantId = 1;
+    consultingTimeUnit = 30;
+    consultingScheduleDateInfo = null;
+}
+
+// 이벤트 설정
+function setEvent(){
     $(".menu_wrap li").hover(function (){
         side3_Off();
     }, function (){
@@ -24,7 +40,7 @@ $(document).ready(function(){
         gnb3_On();
     });
 
-    // 1. 상담 날짜 선택 event
+    // 상담날짜선택 이벤트
     $('.date').each(function(index){
         $(this).attr('date-index', index);
     }).click(function(){
@@ -37,7 +53,73 @@ $(document).ready(function(){
         console.log("selectedDate : " + selectedDate);
     });
 
-    // 2. 상담 상세 설정 event
+    // 상담날짜선택 이전 날짜 보기('<') 이벤트
+    $("#date_arrow_left").click(function(){
+        initAllDataAndComponent();
+        getConsultingScheduleWeekInfo(1, $("#date_1").val(), "previous");
+    });
+
+    // 상담날짜선택 이후 날짜 보기('>') 이벤트
+    $("#date_arrow_right").click(function(){
+        initAllDataAndComponent();
+        getConsultingScheduleWeekInfo(1, $("#date_1").val(), "next");
+    });
+
+    // 예약가능여부 변경 이벤트
+    $("#is_reservation_available_sel").change(function(){
+        // 예약가능여부 : 부
+        if($("#is_reservation_available_sel").val() === "0") {
+            if(checkReservedValidation()){
+                // 상담시간설정 초기화
+                setReservationAvailableTime(null, false);
+
+                // 상담불가시간설정 초기화
+                setReservationUnavailableTime(null, false);
+            }else{
+                $("#is_reservation_available_sel").val("1").prop("selected", true);
+            }
+        }
+        // 예약가능여부 : 여
+        else{
+            // 상담시간설정 세팅
+            setReservationAvailableTime(consultingScheduleDateInfo, true);
+
+            // 상담불가시간설정 세팅
+            setReservationUnavailableTime(consultingScheduleDateInfo, true);
+        }
+    });
+
+    // 상담시간설정 변경 이벤트
+    $("#start_hour_sel").change(function(){
+        if(checkTimeValidation()){
+            consultingScheduleDateInfo.reservationAvailableStartTimeHour = $("#start_hour_sel").val();
+        }else{
+            $("#start_hour_sel").val(consultingScheduleDateInfo.reservationAvailableStartTimeHour).prop("selected", true);
+        }
+    });
+    $("#start_minute_sel").change(function(){
+        if(checkTimeValidation()){
+            consultingScheduleDateInfo.reservationAvailableStartTimeMinute = $("#start_minute_sel").val();
+        }else{
+            $("#start_minute_sel").val(consultingScheduleDateInfo.reservationAvailableStartTimeMinute).prop("selected", true);
+        }
+    });
+    $("#end_hour_sel").change(function(){
+        if(checkTimeValidation()){
+            consultingScheduleDateInfo.reservationAvailableEndTimeHour = $("#end_hour_sel").val();
+        }else{
+            $("#end_hour_sel").val(consultingScheduleDateInfo.reservationAvailableEndTimeHour).prop("selected", true);
+        }
+    });
+    $("#end_minute_sel").change(function(){
+        if(checkTimeValidation()){
+            consultingScheduleDateInfo.reservationAvailableEndTimeMinute = $("#end_minute_sel").val();
+        }else{
+            $("#end_minute_sel").val(consultingScheduleDateInfo.reservationAvailableEndTimeMinute).prop("selected", true);
+        }
+    });
+
+    // 상담불가시간설정 이벤트
     $('.each_time').each(function(index){
         $(this).attr('time-index', index);
     }).click(function(){
@@ -47,100 +129,116 @@ $(document).ready(function(){
         }else{
             $('.each_time[time-index=' + index + ']').addClass('clicked');
         }
-        //$('.each_time[time-index=' + index + ']').addClass('clicked');
-        //$('.each_time[time-index!=' + index + ']').removeClass('clicked');
     });
-
-    /**
-     * 상담 일정 정보 조회
-     *
-     * REQUEST
-     * - 조회구분(1:상담일자정보조회, 2:상담시간정보조회)
-     *
-     * RESPONSE
-     * - 상담 날짜 선택 범위 타이틀(ex.2024.09.04 ~ 2024.09.10)
-     * - 상담 주 날짜값 7개(ex.04,05,06,07,08,09,10)
-     * - 상담 주 일자 데이터 7개(ex.2024-09-04,2024-09-05,2024-09-06,2024-09-07,2024-09-08,2024-09-09,2024-09-10)
-     * - 예약가능여부 값(여,부)
-     * - 상담시간설정 데이터(ex.09:00,17:30)
-    */
-
-    /**
-     * 상담 일정 정보 조회
-     *
-     * REQUEST
-     * - 조회구분(1:상담일자정보조회, 2:상담시간정보조회)
-     * - 상담 선택 일자(2024-09-07)
-     *
-     * RESPONSE
-     * - 상담 불가 시간 List(1:예약대기, 2:예약완료, 3:예약불가)
-     * - 예약시간단위(30)
-     */
-
-    // 상담날짜선택 이전 날짜 보기
-    $("#date_arrow_left").click(function(){
-        getConsultingScheduleWeekInfo(1, $("#date_1").val(), "previous");
-    });
-
-    // 상담날짜선택 이후 날짜 보기
-    $("#date_arrow_right").click(function(){
-        getConsultingScheduleWeekInfo(1, $("#date_1").val(), "next");
-    });
-
-    // 예약가능여부 select 변경
-    $("#is_reservation_available_sel").change(function(){
-        // 예약가능여부 : 부
-        if($("#is_reservation_available_sel").val() === "0") {
-            // 상담시간설정 초기화
-            initReservationAvailableTime();
-
-            // 상담불가시간설정 초기화
-            initReservationUnavailableTime();
-
-            /*$("#start_hour_sel").prop("disabled", true);
-            $("#start_minute_sel").prop("disabled", true);
-            $("#end_hour_sel").prop("disabled", true);
-            $("#end_minute_sel").prop("disabled", true);
-
-            $('.each_time').each(function (index) {
-                if ($('.each_time[time-index=' + index + ']').hasClass('disabled') === false) {
-                    $('.each_time[time-index=' + index + ']').addClass('disabled');
-                }
-            });*/
-        }
-        // 예약가능여부 : 여
-        else{
-            // 상담시간설정 세팅
-            setReservationAvailableTime(consultingScheduleDateInfo, true);
-
-            // 상담불가시간설정 세팅
-            setReservationUnavailableTime(consultingScheduleDateInfo.consultingEachDateInfoList);
-        }
-    });
-
-    initData();
-});
-
-function initData(){
-    consultantId = 1;
-    consultingTimeUnit = 30;
-    consultingEachTimeInfoList = null;
-
-    // 상담날짜 선택 초기화
-    getConsultingScheduleWeekInfo(consultantId, null, null);
 }
 
-function initConsultingScheuduleWeekInfo(){
-    for(let i=0; i<7; i++) {
-        $('.date[date-index='+i+']').addClass('disabled');
-        $('.date[date-index='+i+']').removeClass('clicked');
+// 예약 유효성 체크
+function checkReservedValidation(){
+    const timeInfoList = consultingScheduleDateInfo.consultingEachTimeInfoList;
+
+    if(timeInfoList != null && timeInfoList.length > 0){
+        for(let i=0; i<timeInfoList.length; i++){
+            const reservationStatus = timeInfoList[i].reservationStatus;
+
+            // '예약완료'인 경우
+            if(reservationStatus === "2"){
+                alert("예약완료 건이 존재하여 예약가능여부를 '부'로 변경할 수 없습니다.");
+                return false;
+            }
+        }
     }
+
+    return true;
 }
 
-function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, action) {
-    console.log("getConsultingScheduleWeekInfo called");
+// 시간 유효성 체크
+function checkTimeValidation(){
+    const startTime = parseInt($("#start_hour_sel").val() + $("#start_minute_sel").val());
+    const endTime = parseInt($("#end_hour_sel").val() + $("#end_minute_sel").val());
 
-    initConsultingScheuduleWeekInfo();
+    if(startTime >= endTime){
+        alert("상담시작시간은 상담종료시간보다 이전이어야 합니다.");
+        return false;
+    }
+
+    const timeInfoList = consultingScheduleDateInfo.consultingEachTimeInfoList;
+
+    if(timeInfoList != null && timeInfoList.length > 0){
+        for(let i=0; i<timeInfoList.length; i++){
+            const consultingTime = parseInt((timeInfoList[i].consultingTime).replace(':', ''));
+            const reservationStatus = timeInfoList[i].reservationStatus;
+
+            if(startTime > consultingTime || endTime < consultingTime){
+                // '예약완료'인 경우
+                if(reservationStatus === "2"){
+                    alert("예약완료 건이 존재하여 해당 시간으로 상담시간을 변경할 수 없습니다.");
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+// 전체 데이터 및 컴포넌트 초기화
+function initAllDataAndComponent(){
+    initConsultingScheuduleWeekInfo();  // 상담날짜선택 초기화
+    initIsReservationAvailable();       // [상담상세설정] 예약가능여부 초기화
+    initReservationAvailableTime();     // [상담상세설정] 상담시간설정 초기화
+    initReservationUnavailableTime();   // 상담불가시간설정 초기화
+}
+
+// 상담 날짜 선택 초기화
+function initConsultingScheuduleWeekInfo(){
+    $('.date').each(function(index){
+        if($('.date[date-index=' + index + ']').hasClass('clicked') === true){
+            $('.date[date-index=' + index + ']').removeClass('clicked');
+        }
+        if($('.date[date-index=' + index + ']').hasClass('disabled') === false){
+            $('.date[date-index=' + index + ']').addClass('disabled');
+        }
+    });
+}
+
+// [상담 상세 설정] 예약가능여부 초기화
+function initIsReservationAvailable(){
+    // 예약가능여부 '부'로 세팅
+    $("#is_reservation_available_sel").val("0").prop("selected", true);
+}
+
+// [상담 상세 설정] 상담시간설정 초기화
+function initReservationAvailableTime(){
+    // 상담시간설정 컴포넌트 초기화
+    $("#start_hour_sel").prop("disabled", true);
+    $("#start_minute_sel").prop("disabled", true);
+    $("#end_hour_sel").prop("disabled", true);
+    $("#end_minute_sel").prop("disabled", true);
+
+    // 상담시간설정 데이터 초기화
+    $("#start_hour_sel").val("09").prop("selected", true);
+    $("#start_minute_sel").val("00").prop("selected", true);
+    $("#end_hour_sel").val("17").prop("selected", true);
+    $("#end_minute_sel").val("30").prop("selected", true);
+}
+
+// 상담불가시간설정 초기화
+function initReservationUnavailableTime(){
+    $('.each_time').each(function(index){
+        if($('.each_time[time-index=' + index + ']').hasClass('clicked') === true){
+            $('.each_time[time-index=' + index + ']').removeClass('clicked');
+        }
+        if($('.each_time[time-index=' + index + ']').hasClass('disabled') === false){
+            $('.each_time[time-index=' + index + ']').addClass('disabled');
+        }
+    });
+}
+
+// 상담 날짜 선택(일주일 범위의 날짜 정보) 조회
+function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, action) {
+    console.log("getConsultingScheduleWeekInfo : 상담 날짜 선택(일주일 범위의 날짜 정보) 조회");
+
+    //initConsultingScheuduleWeekInfo();
 
     const params = {};
     params.consultantId = consultantId;
@@ -179,46 +277,40 @@ function getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, actio
 
                             // 예약가능여부 세팅
                             if(isReservationAvailable){
-                                $('.date[date-index='+i+']').removeClass('disabled');
+                                if($('.date[date-index='+i+']').hasClass('disabled') === true){
+                                    $('.date[date-index='+i+']').removeClass('disabled');
+                                }
                             }
 
                             // Default 선택 날짜 세팅
                             if(isSelected){
-                                $('.date[date-index='+i+']').addClass('clicked');
+                                if($('.date[date-index='+i+']').hasClass('clicked') === false){
+                                    $('.date[date-index='+i+']').addClass('clicked');
+                                }
                                 selectedDate = date;
                             }
                         }
 
+                        // 상담 상세 설정(예약가능여부 및 상담시간설정)
                         getConsultingScheduleDateInfo(consultantId, selectedDate);
                     }
                 }else{
-                    alert("ERROR-1");
+                    alert("상담 일정 조회 중 오류가 발생했습니다.(상담 날짜 선택(일주일 범위의 날짜 정보) 조회-ERROR-1)");
                 }
             }else{
-                alert("ERROR-2");
+                alert("상담 일정 조회 중 오류가 발생했습니다.(상담 날짜 선택(일주일 범위의 날짜 정보) 조회-ERROR-2)");
             }
         },
         error:function(e){
-            console.log("오류가 발생했습니다 - " + JSON.stringify(e));
-            alert("ERROR-3");
+            alert("상담 일정 조회 중 오류가 발생했습니다.(상담 날짜 선택(일주일 범위의 날짜 정보) 조회-ERROR-3)");
+            console.log("ERROR-3 : " + JSON.stringify(e))
         }
     });
 }
 
-
-/*function initConsultingScheuduleDateInfo(){
-    $("#is_reservation_available_sel").val("0");
-    $("#start_hour_sel").prop("disabled", true);
-    $("#start_minute_sel").prop("disabled", true);
-    $("#end_hour_sel").prop("disabled", true);
-    $("#end_minute_sel").prop("disabled", true);
-}*/
-
+// 상담상세설정 및 상담불가시간 설정 조회
 function getConsultingScheduleDateInfo(consultantId, searchDate) {
-    console.log("getConsultingScheduleDateInfo called");
-
-    initReservationAvailableTime();
-    initReservationUnavailableTime();
+    console.log("getConsultingScheduleDateInfo : 상담상세설정 및 상담불가시간 설정 조회");
 
     const params = {};
     params.consultantId = consultantId;
@@ -248,85 +340,59 @@ function getConsultingScheduleDateInfo(consultantId, searchDate) {
                         $("#is_reservation_available_sel").val("0");    // 예약가능여부 : 부
                     }
 
+                    // 상담시간설정 초기화
+                    initReservationAvailableTime();
+
                     // 상담시간설정 세팅
                     setReservationAvailableTime(consultingScheduleDateInfo, isReservationAvailable);
                     
                     // 상담불가시간설정 세팅
-                    setReservationUnavailableTime(consultingScheduleDateInfo.consultingEachDateInfoList);
-                    
-                    /*const list = data.consultingEachDateInfoList;
-
-                    if(list != null && list.length > 0){
-                        for(let i=0; i<list.length; i++) {
-                            const dateStr = list[i].dateStr;
-                            const dayOfWeekStr = list[i].dayOfWeekStr;
-                            const date = list[i].date;
-                            const isReservationAvailable = list[i].isReservationAvailable;
-                            const isSelected = list[i].isSelected;
-                            const seq = i+1;
-
-                            $("#dateStr_"+seq).text(dateStr);
-                            $("#dayOfWeekStr_"+seq).text(dayOfWeekStr);
-                            $("#date_"+seq).val(date);
-
-                            // 예약가능여부 세팅
-                            if(isReservationAvailable){
-                                $('.date[date-index='+i+']').removeClass('disabled');
-                            }
-
-                            // Default 선택 날짜 세팅
-                            if(isSelected){
-                                $('.date[date-index='+i+']').addClass('clicked');
-                            }
-                        }
-                    }*/
+                    initReservationUnavailableTime();
+                    setReservationUnavailableTime(consultingScheduleDateInfo, isReservationAvailable);
                 }else{
-                    alert("ERROR-1");
+                    alert("상담 일정 조회 중 오류가 발생했습니다.(상담상세설정 및 상담불가시간 설정 조회-ERROR-1)");
                 }
             }else{
-                alert("ERROR-2");
+                alert("상담 일정 조회 중 오류가 발생했습니다.(상담상세설정 및 상담불가시간 설정 조회-ERROR-2)");
             }
         },
         error:function(e){
-            console.log("오류가 발생했습니다 - " + JSON.stringify(e));
-            alert("ERROR-3");
+            alert("상담 일정 조회 중 오류가 발생했습니다.(상담상세설정 및 상담불가시간 설정 조회-ERROR-3)");
+            console.log("ERROR-3 : " + JSON.stringify(e));
         }
     });
-}
-
-// 상담시간설정 초기화
-function initReservationAvailableTime(){
-    $("#start_hour_sel").prop("disabled", true);
-    $("#start_minute_sel").prop("disabled", true);
-    $("#end_hour_sel").prop("disabled", true);
-    $("#end_minute_sel").prop("disabled", true);
-
-    // 상담시간설정 데이터 초기화
-    $("#start_hour_sel").val("09");
-    $("#start_minute_sel").val("00");
-    $("#end_hour_sel").val("17");
-    $("#end_minute_sel").val("30");
 }
 
 // 상담시간설정 세팅
 function setReservationAvailableTime(data, flag){
     if(flag){
-        const reservationAvailableStartTimeHour = data.reservationAvailableStartTimeHour;
-        const reservationAvailableStartTimeMinute = data.reservationAvailableStartTimeMinute;
-        const reservationAvailableEndTimeHour = data.reservationAvailableEndTimeHour;
-        const reservationAvailableEndTimeMinute = data.reservationAvailableEndTimeMinute;
-
         // 상담시간설정 활성화 처리
         $("#start_hour_sel").prop("disabled", false);
         $("#start_minute_sel").prop("disabled", false);
         $("#end_hour_sel").prop("disabled", false);
         $("#end_minute_sel").prop("disabled", false);
 
-        // 상담시간설정 데이터 세팅
-        $("#start_hour_sel").val(reservationAvailableStartTimeHour);
-        $("#start_minute_sel").val(reservationAvailableStartTimeMinute);
-        $("#end_hour_sel").val(reservationAvailableEndTimeHour);
-        $("#end_minute_sel").val(reservationAvailableEndTimeMinute);
+        const reservationAvailableStartTimeHour = data.reservationAvailableStartTimeHour;
+        const reservationAvailableStartTimeMinute = data.reservationAvailableStartTimeMinute;
+        const reservationAvailableEndTimeHour = data.reservationAvailableEndTimeHour;
+        const reservationAvailableEndTimeMinute = data.reservationAvailableEndTimeMinute;
+
+        if(nullChk(reservationAvailableStartTimeHour) && nullChk(reservationAvailableStartTimeMinute) && nullChk(reservationAvailableEndTimeHour) && nullChk(reservationAvailableEndTimeMinute)){
+            $("#start_hour_sel").val(reservationAvailableStartTimeHour).prop("selected", true);
+            $("#start_minute_sel").val(reservationAvailableStartTimeMinute).prop("selected", true);
+            $("#end_hour_sel").val(reservationAvailableEndTimeHour).prop("selected", true);
+            $("#end_minute_sel").val(reservationAvailableEndTimeMinute).prop("selected", true);
+        }else{
+            $("#start_hour_sel").val("09").prop("selected", true);
+            $("#start_minute_sel").val("00").prop("selected", true);
+            $("#end_hour_sel").val("17").prop("selected", true);
+            $("#end_minute_sel").val("30").prop("selected", true);
+
+            consultingScheduleDateInfo.reservationAvailableStartTimeHour = $("#start_hour_sel").val();
+            consultingScheduleDateInfo.reservationAvailableStartTimeMinute = $("#start_minute_sel").val();
+            consultingScheduleDateInfo.reservationAvailableEndTimeHour = $("#end_hour_sel").val();
+            consultingScheduleDateInfo.reservationAvailableEndTimeMinute = $("#end_minute_sel").val();
+        }
     }else{
         $("#start_hour_sel").prop("disabled", true);
         $("#start_minute_sel").prop("disabled", true);
@@ -335,54 +401,73 @@ function setReservationAvailableTime(data, flag){
     }
 }
 
-// 상담불가시간설정 초기화
-function initReservationUnavailableTime(){
-    $('.each_time').each(function(index){
-        if($('.each_time[time-index=' + index + ']').hasClass('clicked')){
-            $('.each_time[time-index=' + index + ']').removeClass('clicked');
-        }
-        if($('.each_time[time-index=' + index + ']').hasClass('disabled')){
-            $('.each_time[time-index=' + index + ']').addClass('disabled');
-        }
-    });
-}
 
 // 상담불가시간설정 세팅
-function setReservationUnavailableTime(timeInfoList){
-    if(timeInfoList != null && timeInfoList.length > 0){
-        for(let i=0; i<timeInfoList.length; i++){
-            const consultingTime = timeInfoList[i].consultingTime;
-            const consultingTimeUnit = timeInfoList[i].consultingTimeUnit;
-            const reservationStatus = timeInfoList[i].reservationStatus;
+function setReservationUnavailableTime(date, flag){
+    const timeInfoList = (date != null) ? date.consultingEachTimeInfoList : null;
+    const startTime = parseInt($("#start_hour_sel").val() + $("#start_minute_sel").val());
+    const endTime = parseInt($("#end_hour_sel").val() + $("#end_minute_sel").val());
 
-            let consultingTimeStr = consultingTime.replace(':', '');
+    if(flag){
+        $('.each_time').each(function(index){
+            const thisTime = parseInt($('.each_time[time-index=' + index + ']').text().replace(':',''));
 
-            // 예약대기
-            if(reservationStatus === "1"){
-                if($("#time_"+consultingTimeStr).hasClass('disabled') === true){
-                    $("#time_"+consultingTimeStr).removeClass('disabled');
+            if(startTime <= thisTime && endTime >= thisTime){
+                if($('.each_time[time-index=' + index + ']').hasClass('disabled') === true){
+                    $('.each_time[time-index=' + index + ']').removeClass('disabled');
                 }
             }
-            // 예약완료
-            else if(reservationStatus === "2"){
-                if($("#time_"+consultingTimeStr).hasClass('disabled') === false){
-                    $("#time_"+consultingTimeStr).addClass('disabled');
-                }
-            }
-            // 예약불가
-            else if(reservationStatus === "3"){
-                if($("#time_"+consultingTimeStr).hasClass('disabled') === true){
-                    $("#time_"+consultingTimeStr).removeClass('disabled');
-                }
-                if($("#time_"+consultingTimeStr).hasClass('clicked') === false){
-                    $("#time_"+consultingTimeStr).addClass('clicked');
+        });
+
+        if(timeInfoList != null && timeInfoList.length > 0){
+            for(let i=0; i<timeInfoList.length; i++){
+                const consultingTime = timeInfoList[i].consultingTime;
+                const consultingTimeUnit = timeInfoList[i].consultingTimeUnit;
+                const reservationStatus = timeInfoList[i].reservationStatus;
+
+                const consultingTimeStr = consultingTime.replace(':', '');
+                const consultingTimeNumber = parseInt(consultingTimeStr);
+
+                if(startTime <= consultingTimeNumber && endTime >= consultingTimeNumber){
+                    // 예약대기
+                    if(reservationStatus === "1"){
+                        if($("#time_"+consultingTimeStr).hasClass('disabled') === true){
+                            $("#time_"+consultingTimeStr).removeClass('disabled');
+                        }
+                    }
+                    // 예약완료
+                    else if(reservationStatus === "2"){
+                        if($("#time_"+consultingTimeStr).hasClass('disabled') === false){
+                            $("#time_"+consultingTimeStr).addClass('disabled');
+                        }
+                    }
+                    // 예약불가
+                    else if(reservationStatus === "3"){
+                        if($("#time_"+consultingTimeStr).hasClass('disabled') === true){
+                            $("#time_"+consultingTimeStr).removeClass('disabled');
+                        }
+                        if($("#time_"+consultingTimeStr).hasClass('clicked') === false){
+                            $("#time_"+consultingTimeStr).addClass('clicked');
+                        }
+                    }
                 }
             }
         }
+    }else{
+        initReservationUnavailableTime();
     }
 }
 
-// GGMANYAR
+// 상담 일정 초기화
+function initData(){
+    // 전체 데이터 및 컴포넌트 초기화
+    initAllDataAndComponent();
+
+    // 상담 날짜 선택 조회(오늘 날짜 기준)
+    getConsultingScheduleWeekInfo(consultantId, null, null);
+}
+
+// 상담 일정 저장
 function saveData(){
     let reservationDate = "";
     let isReservationAvailable = false;
@@ -396,15 +481,10 @@ function saveData(){
             break;
         }
     }
-    console.log("[GGMANYAR]reservationDate : " + reservationDate);
 
     isReservationAvailable = $("#is_reservation_available_sel").val() !== "0";
-    console.log("[GGMANYAR]isReservationAvailable : " + isReservationAvailable);
-
     reservationAvailableStartTime = $("#start_hour_sel").val() + ":" + $("#start_minute_sel").val() + ":00";
     reservationAvailableEndTime = $("#end_hour_sel").val() + ":" + $("#end_minute_sel").val() + ":00";
-    console.log("[GGMANYAR]reservationAvailableStartTime : " + reservationAvailableStartTime);
-    console.log("[GGMANYAR]reservationAvailableEndTime : " + reservationAvailableEndTime);
 
     $('.each_time').each(function(index){
         if($('.each_time[time-index=' + index + ']').hasClass('clicked') === true){
@@ -414,16 +494,17 @@ function saveData(){
             reservationUnavailableTime += $('.each_time[time-index=' + index + ']').text();
         }
     });
-    console.log("[GGMANYAR]reservationUnavailableTime : " + reservationUnavailableTime);
 
     const params = {};
     params.reservationDate = reservationDate;
     params.consultantId = consultantId;
-    params.isReservationAvailable = true;
-    params.reservationAvailableStartTime = reservationAvailableStartTime;
-    params.reservationAvailableEndTime = reservationAvailableEndTime;
-    params.reservationTimeUnit = consultingTimeUnit;
-    params.reservationUnavailableTime = reservationUnavailableTime;
+    params.isReservationAvailable = isReservationAvailable;
+    if(isReservationAvailable){
+        params.reservationAvailableStartTime = reservationAvailableStartTime;
+        params.reservationAvailableEndTime = reservationAvailableEndTime;
+        params.reservationTimeUnit = consultingTimeUnit;
+        params.reservationUnavailableTime = reservationUnavailableTime;
+    }
 
     $.ajax({
         type: "POST",
@@ -444,79 +525,15 @@ function saveData(){
                         alert("상담 일정 저장 완료(메시지 출력 오류)");
                     }
                 }else{
-                    alert("ERROR-1");
+                    alert("상담 일정 저장 중 오류가 발생했습니다.(상담 일정 저장-ERROR-1)");
                 }
             }else{
-                alert("ERROR-2");
+                alert("상담 일정 저장 중 오류가 발생했습니다.(상담 일정 저장-ERROR-2)");
             }
         },
         error:function(e){
-            console.log("오류가 발생했습니다 - " + JSON.stringify(e));
-            alert("ERROR-3");
+            alert("상담 일정 저장 중 오류가 발생했습니다.(상담 일정 저장-ERROR-3)");
+            console.log("ERROR-3 : " + JSON.stringify(e));
         }
     });
-}
-
-function gnb2_On() {
-    $("#gnb_menu2").attr("class", "on");
-    $("#gnb_menu2 a").attr("class", "on");
-}
-
-function gnb2_Off() {
-    $("#gnb_menu2").attr("class", "");
-    $("#gnb_menu2 a").attr("class", "");
-}
-
-function side2_On() {
-    $("#side_menu2").attr("class", "on");
-}
-
-function side2_Off() {
-    $("#side_menu2").attr("class", "");
-}
-
-// 상담예약하기
-function goReservation() {
-    $("#popup_layer").css("display", "inline");
-}
-
-// 회원 로그인
-function goMemberLogin() {
-    window.location.href = "/moveLogin";
-}
-
-// 비회원 로그인
-function goNonMemberLogin() {
-    //alert("비회원 상담신청 페이지는 준비중입니다.");
-    window.location.href = "/moveConsulting02";
-}
-
-// 회원가입
-function goJoin() {
-    window.location.href = "/moveJoin01";
-}
-
-function goPrevious(step) {
-    if(step == 2){
-        // 이전 버튼
-        window.location.href = "/moveConsulting";
-    }else if(step == 3){
-        // 이전 버튼
-        window.location.href = "/moveConsulting02";
-    }
-}
-
-function goNext(step) {
-    if(step == 1){
-        // 상담 예약하기 버튼
-        window.location.href = "/moveConsulting02"
-    }else if(step == 2){
-        // 다음 버튼
-        window.location.href = "/moveConsulting03"
-    }else if(step == 3){
-        // 예약신청 완료 버튼
-        $("#popup_layer").css("display", "inline");
-    }else{
-        console.log("존재하지 않는 STEP");
-    }
 }
