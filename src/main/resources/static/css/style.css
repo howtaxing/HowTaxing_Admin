@@ -913,6 +913,7 @@ section .contentFrame .bottomArea {
 }
 .select_time .select_time_row .each_time.clicked{ background-color: #2982C8; color: white; }
 .select_time .select_time_row .each_time.disabled{ background-color: #f0f4f5; color: lightgrey; }
+.select_time .select_time_row .each_time.reserved{ background-color: #ff8220; color: white; }
 
 .consultant_info { padding: 10px 20px; font-size: 15px; font-weight: 200; color: #868686; }
 .cancel_refund { padding: 10px 30px; font-size: 14px; font-weight: 300; line-height:22px; color: #868686; }

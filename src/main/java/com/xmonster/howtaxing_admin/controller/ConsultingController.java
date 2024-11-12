@@ -21,18 +21,19 @@ public class ConsultingController {
     // 상담일정 주정보 조회
     @GetMapping("/consulting/weekInfo")
     public Object getConsultingScheduleWeekInfo(@RequestParam(value="consultantId") Long consultantId,
-                                                @RequestParam(value="currentWeekStartDate", required = false) String currentWeekStartDate,
+                                                @RequestParam(value="currentWeekStartDate", required = false) String currentWeekStartDateStr,
+                                                @RequestParam(value="selectedDate", required = false) String selectedDateStr,
                                                 @RequestParam(value="action", required = false) String action) throws Exception {
         log.info(">> [Controller]ConsultingController getConsultingScheduleWeekInfo - 상담일정 주정보 조회");
-        return consultingService.getConsultingScheduleWeekInfo(consultantId, currentWeekStartDate, action);
+        return consultingService.getConsultingScheduleWeekInfo(consultantId, currentWeekStartDateStr, selectedDateStr, action);
     }
 
     // 상담일정 일자정보 조회
     @GetMapping("/consulting/dateInfo")
     public Object getConsultingScheduleDateInfo(@RequestParam(value="consultantId") Long consultantId,
-                                                @RequestParam(value="searchDate") String searchDate) throws Exception {
+                                                @RequestParam(value="searchDate") String searchDateStr) throws Exception {
         log.info(">> [Controller]ConsultingController getConsultingScheduleDateInfo - 상담일정 일자정보 조회");
-        return consultingService.getConsultingScheduleDateInfo(consultantId, searchDate);
+        return consultingService.getConsultingScheduleDateInfo(consultantId, searchDateStr);
     }
 
     // 상담일정 정보 저장
