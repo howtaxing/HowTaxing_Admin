@@ -1,8 +1,10 @@
 package com.xmonster.howtaxing_admin.type;
 
 public enum ConsultingStatus {
-    WAITING,
-    CANCEL,
-    PROGRESS,
-    FINISH
+    PAYMENT_READY,          // 결제대기
+    PAYMENT_COMPLETED,      // 결제완료
+    WAITING,                // 상담대기
+    CANCEL,                 // 상담취소
+    PROGRESS,               // 상담중
+    FINISH                  // 상담종료
 }

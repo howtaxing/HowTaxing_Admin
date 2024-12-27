@@ -1,11 +1,13 @@
 package com.xmonster.howtaxing_admin.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 
 @Controller
+@Slf4j
 public class HomeController {
 
     @GetMapping("/")
@@ -46,6 +48,7 @@ public class HomeController {
 
     @GetMapping("/moveConsultingReservationDetail")
     public String moveConsultingReservationDetail(Model model, @RequestParam String consultingReservationId){
+        log.info("consultingReservationId : " + consultingReservationId);
         model.addAttribute("consultingReservationId", consultingReservationId);
         return "page/consulting_management/consulting_reservation_detail";
     }

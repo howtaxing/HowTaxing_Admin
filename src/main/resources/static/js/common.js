@@ -7,6 +7,25 @@ function nullChk(str){
     return str != null && str !== "" && str !== undefined && str !== "undefined";
 }
 
+function changeEmpty(str, dVal){
+    return nullChk(str) ? str : dVal;
+}
+
+function convertToPhoneFormat(phoneNumber){
+    let result = "";
+
+    if(nullChk(phoneNumber)){
+        // 01012345678 -> 010-1234-5678
+        if(phoneNumber.length === 11){
+            result = phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+        }else{
+            result = phoneNumber;
+        }
+    }
+
+    return result;
+}
+
 function gnb1_On() {
     $("#gnb_menu1").attr("class", "on");
     $("#gnb_menu1 a").attr("class", "on");

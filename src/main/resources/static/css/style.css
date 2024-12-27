@@ -1426,6 +1426,11 @@ input[type="checkbox"]:checked + label span {
 .bold { font-weight: bold; }
 .block { display: block; }
 
+.font_red { color: red !important;}
+.font_orange { color: orange !important;}
+.font_blue { color: #2982C8 !important;}
+.font_general {color: #666666 !important;}
+
 .mt10 { margin-top: 10px !important; }
 .mt20 { margin-top: 20px !important; }
 .mt30 { margin-top: 30px !important; }

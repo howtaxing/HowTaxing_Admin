@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class ConsultingScheduleDateInfoSaveRequest {
     private LocalDate reservationDate;                  // 예약일자
     private Long consultantId;                          // 상담자ID

@@ -2,19 +2,22 @@ package com.xmonster.howtaxing_admin.service;
 
 import com.xmonster.howtaxing_admin.CustomException;
 import com.xmonster.howtaxing_admin.dto.common.ApiResponse;
-import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoResponse;
-import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoSaveRequest;
-import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleWeekInfoResponse;
+import com.xmonster.howtaxing_admin.dto.consulting.*;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleWeekInfoResponse.ConsultingEachDateInfo;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoResponse;
 import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoResponse.ConsultingEachTimeInfo;
-import com.xmonster.howtaxing_admin.model.ConsultingReservationInfo;
-import com.xmonster.howtaxing_admin.model.ConsultingScheduleId;
-import com.xmonster.howtaxing_admin.model.ConsultingScheduleManagement;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingReservationInfoListResponse.ConsultingReservationInfoResponse;
+import com.xmonster.howtaxing_admin.dto.consulting.ConsultingReservationInfoDetailResponse.*;
+import com.xmonster.howtaxing_admin.model.*;
+import com.xmonster.howtaxing_admin.repository.calculation.*;
 import com.xmonster.howtaxing_admin.repository.consulting.ConsultantInfoRepository;
 import com.xmonster.howtaxing_admin.repository.consulting.ConsultingReservationInfoRepository;
 import com.xmonster.howtaxing_admin.repository.consulting.ConsultingScheduleManagementRepository;
+import com.xmonster.howtaxing_admin.repository.user.UserRepository;
+import com.xmonster.howtaxing_admin.type.ConsultingStatus;
 import com.xmonster.howtaxing_admin.type.ErrorCode;
+import com.xmonster.howtaxing_admin.utils.*;
+import com.xmonster.howtaxing_admin.vo.ConsultingReservationInfoVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +27,7 @@ import javax.transaction.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -40,6 +44,22 @@ public class ConsultingService {
     private final ConsultingScheduleManagementRepository consultingScheduleManagementRepository;
     private final ConsultingReservationInfoRepository consultingReservationInfoRepository;
     private final ConsultantInfoRepository consultantInfoRepository;
+    private final CalculationAdditionalAnswerRequestHistoryRepository calculationAdditionalAnswerRequestHistoryRepository;
+    private final CalculationBuyRequestHistoryRepository calculationBuyRequestHistoryRepository;
+    private final CalculationBuyResponseHistoryRepository calculationBuyResponseHistoryRepository;
+    private final CalculationCommentaryResponseHistoryRepository calculationCommentaryResponseHistoryRepository;
+    private final CalculationHistoryRepository calculationHistoryRepository;
+    private final CalculationOwnHouseHistoryRepository calculationOwnHouseHistoryRepository;
+    private final CalculationOwnHouseHistoryDetailRepository calculationOwnHouseHistoryDetailRepository;
+    private final CalculationSellRequestHistoryRepository calculationSellRequestHistoryRepository;
+    private final CalculationSellResponseHistoryRepository calculationSellResponseHistoryRepository;
+    private final UserRepository userRepository;
+
+    private final ConsultantUtil consultantUtil;
+    private final ConsultingReservationUtil consultingReservationUtil;
+    private final HouseUtil houseUtil;
+    private final UserUtil userUtil;
+    private final PaymentUtil paymentUtil;
 
     private final static String THIS_WEEK = "this";
     private final static String PREVIOUS_WEEK = "previous";
@@ -228,11 +248,21 @@ public class ConsultingService {
 
         validationCheckForSaveConsultingScheduleInfo(consultingScheduleDateInfoSaveRequest);
 
+        log.info("consultingScheduleDateInfoSaveRequest : " + consultingScheduleDateInfoSaveRequest);
+
+        LocalDate reservationDate = consultingScheduleDateInfoSaveRequest.getReservationDate();
+        Long consultantId = consultingScheduleDateInfoSaveRequest.getConsultantId();
+        Boolean isReservationAvailable = consultingScheduleDateInfoSaveRequest.getIsReservationAvailable();
+        LocalTime reservationAvailableStartTime = consultingScheduleDateInfoSaveRequest.getReservationAvailableStartTime();
+        LocalTime reservationAvailableEndTime = consultingScheduleDateInfoSaveRequest.getReservationAvailableEndTime();
+        Integer reservationTimeUnit = consultingScheduleDateInfoSaveRequest.getReservationTimeUnit();
+        String reservationUnavailableTime = consultingScheduleDateInfoSaveRequest.getReservationUnavailableTime();
+
         ConsultingScheduleManagement consultingScheduleManagement =
                 consultingScheduleManagementRepository.findByConsultingScheduleId(
                         ConsultingScheduleId.builder()
-                                .consultantId(consultingScheduleDateInfoSaveRequest.getConsultantId())
-                                .reservationDate(consultingScheduleDateInfoSaveRequest.getReservationDate())
+                                .consultantId(consultantId)
+                                .reservationDate(reservationDate)
                                 .build());
 
         // 신규(등록)
@@ -240,31 +270,405 @@ public class ConsultingService {
             consultingScheduleManagement =
                     ConsultingScheduleManagement.builder()
                             .consultingScheduleId(ConsultingScheduleId.builder()
-                                    .reservationDate(consultingScheduleDateInfoSaveRequest.getReservationDate())
-                                    .consultantId(consultingScheduleDateInfoSaveRequest.getConsultantId())
+                                    .reservationDate(reservationDate)
+                                    .consultantId(consultantId)
                                     .build())
-                            .isReservationAvailable(consultingScheduleDateInfoSaveRequest.getIsReservationAvailable())
-                            .reservationAvailableStartTime(consultingScheduleDateInfoSaveRequest.getReservationAvailableStartTime())
-                            .reservationAvailableEndTime(consultingScheduleDateInfoSaveRequest.getReservationAvailableEndTime())
-                            .reservationTimeUnit(consultingScheduleDateInfoSaveRequest.getReservationTimeUnit())
-                            .reservationUnavailableTime(consultingScheduleDateInfoSaveRequest.getReservationUnavailableTime())
+                            .isReservationAvailable(isReservationAvailable)
+                            .reservationAvailableStartTime(reservationAvailableStartTime)
+                            .reservationAvailableEndTime(reservationAvailableEndTime)
+                            .reservationTimeUnit(reservationTimeUnit)
+                            .reservationUnavailableTime(reservationUnavailableTime)
                             .build();
         }
         // 변경(수정)
         else{
-            if(consultingScheduleDateInfoSaveRequest.getConsultantId().equals(consultingScheduleManagement.getConsultingScheduleId().getConsultantId())
-                    && consultingScheduleDateInfoSaveRequest.getReservationDate().equals(consultingScheduleManagement.getConsultingScheduleId().getReservationDate())){
-                consultingScheduleManagement.setIsReservationAvailable(consultingScheduleDateInfoSaveRequest.getIsReservationAvailable());
-                consultingScheduleManagement.setReservationAvailableStartTime(consultingScheduleDateInfoSaveRequest.getReservationAvailableStartTime());
-                consultingScheduleManagement.setReservationAvailableEndTime(consultingScheduleDateInfoSaveRequest.getReservationAvailableEndTime());
-                consultingScheduleManagement.setReservationTimeUnit(consultingScheduleDateInfoSaveRequest.getReservationTimeUnit());
-                consultingScheduleManagement.setReservationUnavailableTime(consultingScheduleDateInfoSaveRequest.getReservationUnavailableTime());
+            if(consultantId.equals(consultingScheduleManagement.getConsultingScheduleId().getConsultantId())
+                    && reservationDate.equals(consultingScheduleManagement.getConsultingScheduleId().getReservationDate())){
+                consultingScheduleManagement.setIsReservationAvailable(isReservationAvailable);
+                consultingScheduleManagement.setReservationAvailableStartTime(reservationAvailableStartTime);
+                consultingScheduleManagement.setReservationAvailableEndTime(reservationAvailableEndTime);
+                consultingScheduleManagement.setReservationTimeUnit(reservationTimeUnit);
+                consultingScheduleManagement.setReservationUnavailableTime(reservationUnavailableTime);
             }
         }
 
         consultingScheduleManagementRepository.saveAndFlush(consultingScheduleManagement);
 
         return ApiResponse.success(Map.of("result", "상담일정 정보가 저장되었습니다."));
+    }
+
+    // 상담예약정보 목록 조회
+    public Object getConsultingReservationInfoList(ConsultingReservationInfoListRequest consultingReservationInfoListRequest) throws Exception {
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoList - 상담예약정보 목록 조회");
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        Long consultantId = consultingReservationInfoListRequest.getConsultantId();
+        LocalDate reservationDate = consultingReservationInfoListRequest.getReservationDate();
+        ConsultingStatus consultingStatus = consultingReservationInfoListRequest.getConsultingStatus();
+        String consultingType = consultingReservationInfoListRequest.getConsultingType();
+        String customerName = consultingReservationInfoListRequest.getCustomerName();
+
+        int listCnt = 0;
+        List<ConsultingReservationInfoResponse> consultingReservationInfoResponseList = null;
+
+        List<ConsultingReservationInfo> consultingReservationInfoList =
+                consultingReservationInfoRepository.findConsultingReservationInfoList(consultantId, reservationDate, consultingStatus, consultingType, customerName);
+
+        if(consultingReservationInfoList != null){
+            consultingReservationInfoResponseList = new ArrayList<>();
+
+            int seqCnt = 1;
+            for(ConsultingReservationInfo consultingReservationInfo : consultingReservationInfoList){
+                String resConsultingStatus = EMPTY;
+                if(ConsultingStatus.PAYMENT_READY.equals(consultingReservationInfo.getConsultingStatus())){
+                    resConsultingStatus = "결제대기";
+                }else if(ConsultingStatus.PAYMENT_COMPLETED.equals(consultingReservationInfo.getConsultingStatus())){
+                    resConsultingStatus = "결제완료";
+                }else if(ConsultingStatus.WAITING.equals(consultingReservationInfo.getConsultingStatus())){
+                    resConsultingStatus = "상담대기";
+                }else if(ConsultingStatus.CANCEL.equals(consultingReservationInfo.getConsultingStatus())){
+                    resConsultingStatus = "상담취소";
+                }else if(ConsultingStatus.PROGRESS.equals(consultingReservationInfo.getConsultingStatus())){
+                    resConsultingStatus = "상담중";
+                }else if(ConsultingStatus.FINISH.equals(consultingReservationInfo.getConsultingStatus())){
+                    resConsultingStatus = "상담종료";
+                }
+
+                consultingReservationInfoResponseList.add(
+                        ConsultingReservationInfoResponse.builder()
+                                .seq(seqCnt)
+                                .consultingReservationId(consultingReservationInfo.getConsultingReservationId())
+                                .reservationDate(consultingReservationInfo.getReservationDate().format(dateFormatter))
+                                .reservationTime(consultingReservationInfo.getReservationStartTime().format(timeFormatter))
+                                .consultingType(getConsultingTypeStr(consultingReservationInfo.getConsultingType()))
+                                .customerName(consultingReservationInfo.getCustomerName())
+                                .consultantId(consultingReservationInfo.getConsultantId())
+                                //.consultantName(consultingReservationInfo.getConsultantName())
+                                .consultingStatus(resConsultingStatus)
+                                .build());
+                seqCnt++;
+            }
+
+            listCnt = consultingReservationInfoResponseList.size();
+        }
+
+        return ApiResponse.success(
+                ConsultingReservationInfoListResponse.builder()
+                        .listCnt(listCnt)
+                        .consultingReservationInfoResponseList(consultingReservationInfoResponseList)
+                        .build());
+    }
+
+    // 상담예약정보 상세 조회(GGMANYAR)
+    public Object getConsultingReservationInfoDetail(Long consultingReservationId) throws Exception {
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - 상담예약정보 상세 조회");
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        DateTimeFormatter dateTimeFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+        DateTimeFormatter dateFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        if(consultingReservationId == null){
+            throw new CustomException(ErrorCode.CONSULTING_DETAIL_INPUT_ERROR, "상담예약ID가 입력되지 않았습니다.");
+        }
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-01");
+
+        /* 데이터 조회 */
+        // 1. 상담예약정보
+        ConsultingReservationInfo consultingReservationInfo = consultingReservationInfoRepository.findByConsultingReservationId(consultingReservationId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONSULTING_DETAIL_INPUT_ERROR, "존재하지 않는 상담예약ID 입니다."));
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-02");
+
+        // 2. 사용자정보
+        long userId = consultingReservationInfo.getUserId();
+
+        // 3. 상담자정보
+        //ConsultantInfo consultantInfo = consultantUtil.findSelectedConsultantInfo(consultingReservationInfo.getConsultantId());
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-03");
+
+        // 4. 계산이력
+        Long calcHistoryId = consultingReservationInfo.getCalcHistoryId();
+        String calcType = null;
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-04");
+
+        // 5. 계산요청이력(취득세, 양도소득세 구분)
+        // 6. 계산응답이력(취득세, 양도소득세 구분)
+        // 7. 계산추가답변요청이력
+        // 8. 계산해설응답이력
+        // 9. 계산보유주택이력(상세포함)
+        CalculationHistory calculationHistory = null;
+        CalculationBuyRequestHistory calculationBuyRequestHistory = null;
+        CalculationSellRequestHistory calculationSellRequestHistory = null;
+        List<CalculationAdditionalAnswerRequestHistory> calculationAdditionalAnswerRequestHistoryList = null;
+        List<CalculationBuyResponseHistory> calculationBuyResponseHistoryList = null;
+        List<CalculationSellResponseHistory> calculationSellResponseHistoryList = null;
+        List<CalculationCommentaryResponseHistory> calculationCommentaryResponseHistoryList = null;
+        CalculationOwnHouseHistory calculationOwnHouseHistory = null;
+        List<CalculationOwnHouseHistoryDetail> calculationOwnHouseHistoryDetailList = null;
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-05");
+
+        // 계산 결과 존재
+        if(calcHistoryId != null){
+            calculationAdditionalAnswerRequestHistoryList = new ArrayList<>();
+            calculationCommentaryResponseHistoryList = new ArrayList<>();
+
+            calculationHistory = calculationHistoryRepository.findByCalcHistoryId(calcHistoryId);
+
+            calcType = calculationHistory.getCalcType();
+            if(CALC_TYPE_BUY.equals(calcType)){
+                calculationBuyResponseHistoryList = new ArrayList<>();
+
+                calculationBuyRequestHistory = calculationBuyRequestHistoryRepository.findByCalcHistoryId(calcHistoryId);
+                calculationBuyResponseHistoryList = calculationBuyResponseHistoryRepository.findByCalcHistoryId(calcHistoryId);
+            }else if(CALC_TYPE_SELL.equals(calcType)){
+                calculationSellResponseHistoryList = new ArrayList<>();
+
+                calculationSellRequestHistory = calculationSellRequestHistoryRepository.findByCalcHistoryId(calcHistoryId);
+                calculationSellResponseHistoryList = calculationSellResponseHistoryRepository.findByCalcHistoryId(calcHistoryId);
+            }
+
+            calculationAdditionalAnswerRequestHistoryList = calculationAdditionalAnswerRequestHistoryRepository.findByCalcHistoryId(calcHistoryId);
+            calculationCommentaryResponseHistoryList = calculationCommentaryResponseHistoryRepository.findByCalcHistoryId(calcHistoryId);
+            calculationOwnHouseHistory = calculationOwnHouseHistoryRepository.findByCalcHistoryId(calcHistoryId);
+
+            if(calculationOwnHouseHistory != null && calculationOwnHouseHistory.getOwnHouseHistoryId() != null){
+                calculationOwnHouseHistoryDetailList = new ArrayList<>();
+                calculationOwnHouseHistoryDetailList = calculationOwnHouseHistoryDetailRepository.findByOwnHouseHistoryId(calculationOwnHouseHistory.getOwnHouseHistoryId());
+            }
+        }
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-06");
+
+        ConsultingBaseInfoResponse consultingBaseInfoResponse = null;
+        CalculationBuyHouseInfoResponse calculationBuyHouseInfoResponse = null;
+        CalculationSellHouseInfoResponse calculationSellHouseInfoResponse = null;
+        List<OwnHouseInfoResponseResponse> ownHouseInfoResponseResponseList = null;
+        List<CalculationBuyResultInfoResponse> calculationBuyResultInfoResponseList = null;
+        List<CalculationSellResultInfoResponse> calculationSellResultInfoResponseList = null;
+        List<CalculationCommentaryInfoResponse> calculationCommentaryInfoResponseList = null;
+        ConsultingProgressInfoResponse consultingProgressInfoResponse = null;
+        ConsultingStatusInfoResponse consultingStatusInfoResponse = null;
+
+        /* 응답값에 세팅 */
+        // 1. 상담기본정보
+        LocalDate reservationDate = consultingReservationInfo.getReservationDate();
+        LocalTime reservationTime = consultingReservationInfo.getReservationStartTime();
+        String reservationDateStr = null;
+        String reservationTimeStr = null;
+        if(reservationDate != null) reservationDateStr = reservationDate.format(dateFormatter2);
+        if(reservationTime != null) reservationTimeStr = reservationTime.format(timeFormatter);
+
+        consultingBaseInfoResponse =
+                ConsultingBaseInfoResponse.builder()
+                        .consultingReservationId(consultingReservationInfo.getConsultingReservationId())
+                        .reservationDate(reservationDateStr)
+                        .reservationTime(reservationTimeStr)
+                        .consultingType(getConsultingTypeStr(consultingReservationInfo.getConsultingType()))
+                        .customerName(consultingReservationInfo.getCustomerName())
+                        .customerPhone(consultingReservationInfo.getCustomerPhone())
+                        .consultingInflowPath(getConsultingInflowPath(consultingReservationInfo.getConsultingInflowPath()))
+                        .consultingRequestContent(consultingReservationInfo.getConsultingRequestContent())
+                        .build();
+
+        if(consultingBaseInfoResponse == null){
+            throw new CustomException(ErrorCode.CONSULTING_DETAIL_OUTPUT_ERROR, "상담기본정보 조회에 실패했습니다.");
+        }
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-07");
+
+        // 계산 결과 존재
+        if(calcHistoryId != null){
+            // TODO. 2/3/4/5
+            // 2. 계산대상주택정보
+            // 3. 보유주택정보(계산시점 기준)
+            // 4. 계산결과정보
+            // 5. 해설정보(일단 제외)
+        }
+
+        // 6. 상담진행정보
+        consultingProgressInfoResponse =
+                ConsultingProgressInfoResponse.builder()
+                        .consultingStatus(consultingReservationInfo.getConsultingStatus())
+                        .paymentAmount(consultingReservationInfo.getPaymentAmount())
+                        .consultingContent(consultingReservationInfo.getConsultingContent())
+                        .remark(consultingReservationInfo.getRemark())
+                        .build();
+
+        if(consultingProgressInfoResponse == null){
+            throw new CustomException(ErrorCode.CONSULTING_DETAIL_OUTPUT_ERROR, "상담진행정보 조회에 실패했습니다.");
+        }
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-08");
+
+        // 7. 상담현황정보
+        LocalDateTime consultingRequestDatetime = consultingReservationInfo.getConsultingRequestDatetime();
+        LocalDateTime consultingStartDatetime = consultingReservationInfo.getConsultingStartDatetime();
+        LocalDateTime consultingEndDatetime = consultingReservationInfo.getConsultingEndDatetime();
+        LocalDateTime consultingCancelDatetime = consultingReservationInfo.getConsultingCancelDatetime();
+        String consultingRequestDatetimeStr = null;
+        String consultingReservationDatetimeStr = null;
+        String consultingStartDatetimeStr = null;
+        String consultingEndDatetimeStr = null;
+        String consultingCancelDatetimeStr = null;
+        if(consultingRequestDatetime != null) consultingRequestDatetimeStr = consultingRequestDatetime.format(dateTimeFormatter2);
+        consultingReservationDatetimeStr = reservationDateStr + SPACE + reservationTimeStr;
+        if(consultingStartDatetime != null) consultingStartDatetimeStr = consultingStartDatetime.format(dateTimeFormatter2);
+        if(consultingEndDatetime != null) consultingEndDatetimeStr = consultingEndDatetime.format(dateTimeFormatter2);
+        if(consultingCancelDatetime != null) consultingCancelDatetimeStr = consultingCancelDatetime.format(dateTimeFormatter2);
+
+        consultingStatusInfoResponse =
+                ConsultingStatusInfoResponse.builder()
+                        .consultingRequestDatetime(consultingRequestDatetimeStr)
+                        .consultingReservationDatetime(consultingReservationDatetimeStr)
+                        .consultingStartDatetime(consultingStartDatetimeStr)
+                        .consultingEndDatetime(consultingEndDatetimeStr)
+                        .consultingCancelDatetime(consultingCancelDatetimeStr)
+                        .lastModifier(consultingReservationInfo.getLastModifier())
+                        .build();
+
+        if(consultingStatusInfoResponse == null){
+            throw new CustomException(ErrorCode.CONSULTING_DETAIL_OUTPUT_ERROR, "상담현황정보 조회에 실패했습니다.");
+        }
+
+        log.info(">> [Service]ConsultingService getConsultingReservationInfoDetail - STEP-09");
+
+        return ApiResponse.success(
+                ConsultingReservationInfoDetailResponse.builder()
+                        .consultingBaseInfoResponse(consultingBaseInfoResponse)
+                        .calculationBuyHouseInfoResponse(calculationBuyHouseInfoResponse)
+                        .calculationSellHouseInfoResponse(calculationSellHouseInfoResponse)
+                        .ownHouseInfoResponseResponseList(ownHouseInfoResponseResponseList)
+                        .calculationBuyResultInfoResponseList(calculationBuyResultInfoResponseList)
+                        .calculationSellResultInfoResponseList(calculationSellResultInfoResponseList)
+                        .calculationCommentaryInfoResponseList(calculationCommentaryInfoResponseList)
+                        .consultingProgressInfoResponse(consultingProgressInfoResponse)
+                        .consultingStatusInfoResponse(consultingStatusInfoResponse)
+                        .build());
+    }
+
+    // 상담 상태 변경
+    public Object changeConsultingStatus(ConsultingStatusChangeRequest consultingStatusChangeRequest) throws Exception {
+        log.info(">> [Service]ConsultingService changeConsultingStatus - 상담 상태 변경");
+
+        validationCheckForChangeConsultingStatus(consultingStatusChangeRequest);
+
+        Long consultingReservationId = consultingStatusChangeRequest.getConsultingReservationId();
+        ConsultingStatus consultingStatus = consultingStatusChangeRequest.getConsultingStatus();
+
+        ConsultingReservationInfo consultingReservationInfo = consultingReservationUtil.findConsultingReservationInfo(consultingReservationId);
+
+        ConsultingStatus orgConsultingStatus = consultingReservationInfo.getConsultingStatus();
+
+        // 변경되는 상담 상태가 상담이 진행되는 방향이 아닐 때 오류
+        if(orgConsultingStatus.ordinal() >= consultingStatus.ordinal()){
+            throw new CustomException(ErrorCode.CONSULTING_STATUS_INPUT_ERROR, "상담 상태 변경은 역방향으로 진행될 수 없습니다.");
+        }
+
+        consultingReservationInfo.setConsultingStatus(consultingStatus);
+
+        // 상담 시작
+        if(ConsultingStatus.PROGRESS.equals(consultingStatus)){
+            consultingReservationInfo.setConsultingStartDatetime(LocalDateTime.now());
+        }
+        // 상담 종료
+        else if(ConsultingStatus.FINISH.equals(consultingStatus)){
+            consultingReservationInfo.setConsultingEndDatetime(LocalDateTime.now());
+        }
+
+        try{
+            consultingReservationInfoRepository.saveAndFlush(consultingReservationInfo);
+        }catch(Exception e){
+            throw new CustomException(ErrorCode.CONSULTING_STATUS_OUTPUT_ERROR, "상담 상태 DB 업데이트 중 오류가 발생했습니다.");
+        }
+
+        return ApiResponse.success(Map.of("result", "상담 상태가 업데이트 되었습니다."));
+    }
+
+    // 상담 데이터 저장
+    public Object saveConsultingData(ConsultingDataSaveRequest consultingDataSaveRequest) throws Exception {
+        log.info(">> [Service]ConsultingService saveConsultingData - 상담 데이터 저장");
+
+        if(consultingDataSaveRequest == null){
+            throw new CustomException(ErrorCode.CONSULTING_DATA_INPUT_ERROR);
+        }
+
+        Long consultingReservationId = consultingDataSaveRequest.getConsultingReservationId();
+        String consultingContent = consultingDataSaveRequest.getConsultingContent();
+        String consultingRemark = consultingDataSaveRequest.getConsultingRemark();
+
+        if(consultingReservationId == null){
+            throw new CustomException(ErrorCode.CONSULTING_DATA_INPUT_ERROR, "상담예약ID가 입력되지 않았습니다.");
+        }
+
+        ConsultingReservationInfo consultingReservationInfo = consultingReservationUtil.findConsultingReservationInfo(consultingReservationId);
+
+        if(StringUtils.isNotBlank(consultingContent)){
+            consultingReservationInfo.setConsultingContent(consultingContent);
+        }
+
+        if(StringUtils.isNotBlank(consultingRemark)){
+            consultingReservationInfo.setRemark(consultingRemark);
+        }
+
+        try{
+            consultingReservationInfoRepository.saveAndFlush(consultingReservationInfo);
+        }catch(Exception e){
+            throw new CustomException(ErrorCode.CONSULTING_STATUS_OUTPUT_ERROR, "상담 데이터 DB 저장 중 오류가 발생했습니다.");
+        }
+
+        return ApiResponse.success(Map.of("result", "상담 데이터 저장이 완료되었습니다."));
+    }
+
+    // 상담유형 문자열 변환하여 가져오기
+    private String getConsultingTypeStr(String consultingType){
+        StringBuilder resultSb = new StringBuilder(EMPTY);
+
+        if(StringUtils.isNotBlank(consultingType)){
+            String[] consultingTypeArr = consultingType.split(COMMA);
+
+            for(String consultingTypeUnit : consultingTypeArr){
+                if(!EMPTY.contentEquals(resultSb)){
+                    resultSb.append(COMMA);
+                }
+
+                if(CONSULTING_TYPE_BUY.equals(consultingTypeUnit)){
+                    resultSb.append("취득세");
+                }else if(CONSULTING_TYPE_SELL.equals(consultingTypeUnit)){
+                    resultSb.append("양도소득세");
+                }else if(CONSULTING_TYPE_INHERIT.equals(consultingTypeUnit)){
+                    resultSb.append("상속세");
+                }else if(CONSULTING_TYPE_PROPERTY.equals(consultingTypeUnit)){
+                    resultSb.append("재산세");
+                }
+            }
+        }
+
+        return resultSb.toString();
+    }
+
+    // 상담유입경로 문자열 변환하여 가져오기
+    private String getConsultingInflowPath(String consultingInflowPath){
+        String resultStr = EMPTY;
+
+        if(StringUtils.isNotBlank(consultingInflowPath)){
+            if(CONSULTING_TYPE_GEN.equals(consultingInflowPath)){
+                resultStr = "일반";
+            }else if(CONSULTING_TYPE_BUY.equals(consultingInflowPath)){
+                resultStr = "취득세 계산";
+            }else if(CONSULTING_TYPE_SELL.equals(consultingInflowPath)){
+                resultStr = "양도소득세 계산";
+            }
+        }
+
+        return resultStr;
     }
 
     private List<ConsultingEachDateInfo> getConsultingWeekInfo(LocalDate baseDate){
@@ -331,18 +735,42 @@ public class ConsultingService {
 
         if(isReservationAvailable == null){
             throw new CustomException(ErrorCode.CONSULTING_SCHEDULE_SAVE_ERROR, "상담일정정보 저장을 위한 예약가능여부 값이 입력되지 않았습니다.");
+        }else{
+            if(isReservationAvailable){
+                if(reservationAvailableStartTime == null){
+                    throw new CustomException(ErrorCode.CONSULTING_SCHEDULE_SAVE_ERROR, "상담일정정보 저장을 위한 예약가능시작시간이 입력되지 않았습니다.");
+                }
+
+                if(reservationAvailableEndTime == null){
+                    throw new CustomException(ErrorCode.CONSULTING_SCHEDULE_SAVE_ERROR, "상담일정정보 저장을 위한 예약가능종료시간이 입력되지 않았습니다.");
+                }
+
+                if(reservationTimeUnit == null){
+                    throw new CustomException(ErrorCode.CONSULTING_SCHEDULE_SAVE_ERROR, "상담일정정보 저장을 위한 예약시간단위가 입력되지 않았습니다.");
+                }
+            }
+        }
+    }
+
+    // 상담 상태 변경 유효값 체크
+    private void validationCheckForChangeConsultingStatus(ConsultingStatusChangeRequest consultingStatusChangeRequest){
+        if(consultingStatusChangeRequest == null){
+            throw new CustomException(ErrorCode.CONSULTING_STATUS_INPUT_ERROR);
         }
 
-        if(reservationAvailableStartTime == null){
-            throw new CustomException(ErrorCode.CONSULTING_SCHEDULE_SAVE_ERROR, "상담일정정보 저장을 위한 예약가능시작시간이 입력되지 않았습니다.");
+        Long consultingReservationId = consultingStatusChangeRequest.getConsultingReservationId();
+        ConsultingStatus consultingStatus = consultingStatusChangeRequest.getConsultingStatus();
+
+        if(consultingReservationId == null){
+            throw new CustomException(ErrorCode.CONSULTING_STATUS_INPUT_ERROR, "상담예약ID가 입력되지 않았습니다.");
         }
 
-        if(reservationAvailableEndTime == null){
-            throw new CustomException(ErrorCode.CONSULTING_SCHEDULE_SAVE_ERROR, "상담일정정보 저장을 위한 예약가능종료시간이 입력되지 않았습니다.");
-        }
-        
-        if(reservationTimeUnit == null){
-            throw new CustomException(ErrorCode.CONSULTING_SCHEDULE_SAVE_ERROR, "상담일정정보 저장을 위한 예약시간단위가 입력되지 않았습니다.");
+        if(consultingStatus == null){
+            throw new CustomException(ErrorCode.CONSULTING_STATUS_INPUT_ERROR, "상담 상태 값이 입력되지 않았습니다.");
+        }else{
+            if(!ConsultingStatus.PROGRESS.equals(consultingStatus) && !ConsultingStatus.FINISH.equals(consultingStatus)){
+                throw new CustomException(ErrorCode.CONSULTING_STATUS_INPUT_ERROR, "상담 상태 값이 올바르지 않습니다.");
+            }
         }
     }
 

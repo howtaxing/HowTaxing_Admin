@@ -19,24 +19,6 @@ $(document).ready(function(){
         gnb3_On();
     });
 
-    // 1. 상담 날짜 선택 event
-    $('.date').each(function(index){
-        $(this).attr('date-index', index);
-    }).click(function(){
-        var index = $(this).attr('date-index');
-        $('.date[date-index=' + index + ']').addClass('clicked');
-        $('.date[date-index!=' + index + ']').removeClass('clicked');
-    });
-
-    // 2. 상담 상세 설정 event
-    $('.each_time').each(function(index){
-        $(this).attr('time-index', index);
-    }).click(function(){
-        var index = $(this).attr('time-index');
-        $('.each_time[time-index=' + index + ']').addClass('clicked');
-        $('.each_time[time-index!=' + index + ']').removeClass('clicked');
-    });
-
     // 상담번호 클릭
     $('.url_link').on('click', function(){
         const id = $(this).attr('data-value');
@@ -47,25 +29,102 @@ $(document).ready(function(){
 });
 
 function init() {
-    // 1.상담종류 선택 초기화
-    $("input:radio[name='consultType']").eq(0).attr("checked", true);
-    $("#consultTypePrice_Visit").css("display", "none");
-    $("#consultTypeExplain_Visit").css("display", "none");
-    $("#consultTypePrice_Phone").css("display", "block");
-    $("#consultTypeExplain_Phone").css("display", "block");
-    $("#visit_Detail").css("visibility", "hidden");
+    $("#consulting_reservation_id").empty();
+    getConsultingReservationInfoList();
+}
 
-    // 2.날짜 선택 초기화
-    $('.date[date-index=3]').addClass('clicked');
-    $('.date[date-index=6]').addClass('disabled');
+function getConsultingReservationInfoList(){
 
-    // 3.시간 선택 초기화
-    $('.each_time[time-index=0]').addClass('clicked');
-    $('.each_time[time-index=3]').addClass('disabled');
-    $('.each_time[time-index=7]').addClass('disabled');
-    $('.each_time[time-index=10]').addClass('disabled');
-    $('.each_time[time-index=12]').addClass('disabled');
-    $('.each_time[time-index=13]').addClass('disabled');
+    let listHtml = "";
+    const params = {};
+    //params.consultantId = 1;
+
+    $.ajax({
+        type: "POST",
+        url: "/consulting/reservationList",
+        contentType : "application/json",
+        data: JSON.stringify(params),
+        success:function(ret){
+            console.log("상담예약정보 목록 조회 : " + JSON.stringify(ret));
+
+            if(nullChk(ret) && nullChk(ret.errYn) && nullChk(ret.data)){
+                const errYn = ret.errYn;
+                const data = ret.data;
+                const listCnt = data.listCnt;
+                const list = data.consultingReservationInfoResponseList;
+
+                if(errYn === "N"){
+                    if(listCnt > 0){
+                        list.forEach(function(item, index){
+                            let consultantName = "-";
+                            if(item.consultantId === 1){
+                                consultantName = "이민정음 세무사";
+                            }else if(item.consultantId === 2){
+                                consultantName = "박지은 세무사";
+                            }else if(item.consultantId === 2){
+                                consultantName = "윤준수 세무사";
+                            }
+
+                            let consultingType = "-";
+                            if(nullChk(item.consultingType)){
+                                consultingType = item.consultingType;
+                            }
+
+                            let consultingStatus = item.consultingStatus;
+
+                            let fontStyle = "font_general";
+                            if(consultingStatus === "결제완료"){
+                                fontStyle = "font_blue";
+                            }else if(consultingStatus === "상담대기"){
+                                fontStyle = "font_orange";
+                            }else if(consultingStatus === "상담중"){
+                                fontStyle = "font_red";
+                            }
+
+                            listHtml += "<tr>";
+                            listHtml += "   <td>" + item.seq + "</td>";
+                            //listHtml += "   <td><a class='url_link' data-value='" + item.consultingReservationId + "'>" + item.consultingReservationId + "</td>";
+                            listHtml += "   <td><a class='url_link bold' onclick='goDetail(" + item.consultingReservationId + ")'>" + item.consultingReservationId + "</td>";
+                            listHtml += "   <td>" + item.reservationDate + "</td>";
+                            listHtml += "   <td>" + item.reservationTime + "</td>";
+                            listHtml += "   <td>" + consultingType + "</td>";
+                            listHtml += "   <td>" + item.customerName + "</td>";
+                            listHtml += "   <td>" + consultantName + "</td>";
+                            listHtml += "   <td class='" + fontStyle + "'>" + consultingStatus + "</td>";
+                            listHtml += "</tr>";
+                        });
+
+                        $("#consulting_reservation_list").html(listHtml);
+                    }else{
+                        initConsultingReservationInfoList();
+                    }
+                }else{
+                    alert("상담 일정 저장 중 오류가 발생했습니다.(상담 일정 저장-ERROR-1)");
+                    initConsultingReservationInfoList();
+                }
+            }else{
+                alert("상담 일정 저장 중 오류가 발생했습니다.(상담 일정 저장-ERROR-2)");
+                initConsultingReservationInfoList();
+            }
+        },
+        error:function(e){
+            alert("상담 일정 저장 중 오류가 발생했습니다.(상담 일정 저장-ERROR-3)");
+            console.log("ERROR-3 : " + JSON.stringify(e));
+            initConsultingReservationInfoList();
+        }
+    });
+}
+
+function goDetail(consultingReservationId){
+    location.href = "/moveConsultingReservationDetail?consultingReservationId=" + consultingReservationId;
+}
+
+function initConsultingReservationInfoList(){
+    listHtml += "<tr>";
+    listHtml += "<td colspan='8'>상담 예약 현황 조회 결과가 존재하지 않습니다.</td>";
+    listHtml += "</tr>";
+
+    $("#consulting_reservation_list").html(listHtml);
 }
 
 function gnb2_On() {
@@ -90,11 +149,6 @@ function side2_Off() {
 function goReservation() {
     $("#popup_layer").css("display", "inline");
 }
-
-/*function goDetail(value) {
-    alert("goDetail");
-    alert($(value).attr('data-value'));
-}*/
 
 // 회원 로그인
 function goMemberLogin() {

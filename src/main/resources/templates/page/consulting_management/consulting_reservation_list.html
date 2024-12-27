@@ -26,7 +26,7 @@
                         <img th:src="@{/images/consulting_date.png}" style="width:40px; vertical-align:middle;"></img>
                         <span class="contents_small_title">상담 예약 현황</span>
 
-                        <div class="search_form">
+                        <div class="search_form" style="display: none;">
                             <table class="search_table">
                                 <colgroup>
                                     <col style="width:10%">
@@ -68,7 +68,7 @@
                             </table>
                         </div>
 
-                        <div class="result_list mt40">
+                        <div class="result_list mt20">
                             <table>
                                 <colgroup>
                                     <col style="width:5%">
@@ -92,104 +92,97 @@
                                     <th>상담진행</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <!--<td><span class="url_link" id="ggmanyar" onclick="goDetail(this)">122</span></td>-->
-                                    <td>
-                                        <a class="url_link" data-value="122">122</a>
-                                    </td>
-                                    <td>2024.08.05</td>
-                                    <td>12:30</td>
-                                    <td>취득세</td>
-                                    <td>홍길동</td>
-                                    <td>이민정음 세무사</td>
-                                    <td>대기</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>
-                                        <a class="url_link" data-value="121">121</a>
-                                    </td>
-                                    <td>2024.08.05</td>
-                                    <td>12:30</td>
-                                    <td>취득세</td>
-                                    <td>홍길동</td>
-                                    <td>이민정음 세무사</td>
-                                    <td>대기</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>
-                                        <a class="url_link" data-value="120">120</a>
-                                    </td>
-                                    <td>2024.08.05</td>
-                                    <td>12:30</td>
-                                    <td>취득세</td>
-                                    <td>홍길동</td>
-                                    <td>이민정음 세무사</td>
-                                    <td>대기</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>
-                                        <a class="url_link" data-value="119">119</a>
-                                    </td>
-                                    <td>2024.08.05</td>
-                                    <td>12:30</td>
-                                    <td>취득세</td>
-                                    <td>홍길동</td>
-                                    <td>이민정음 세무사</td>
-                                    <td>대기</td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>
-                                        <a class="url_link" data-value="118">118</a>
-                                    </td>
-                                    <td>2024.08.05</td>
-                                    <td>12:30</td>
-                                    <td>취득세</td>
-                                    <td>홍길동</td>
-                                    <td>이민정음 세무사</td>
-                                    <td>대기</td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>
-                                        <a class="url_link" data-value="117">117</a>
-                                    </td>
-                                    <td>2024.08.05</td>
-                                    <td>12:30</td>
-                                    <td>취득세</td>
-                                    <td>홍길동</td>
-                                    <td>이민정음 세무사</td>
-                                    <td>대기</td>
-                                </tr>
-                                <tr>
-                                    <td>7</td>
-                                    <td>
-                                        <a class="url_link" data-value="116">116</a>
-                                    </td>
-                                    <td>2024.08.05</td>
-                                    <td>12:30</td>
-                                    <td>취득세</td>
-                                    <td>홍길동</td>
-                                    <td>이민정음 세무사</td>
-                                    <td>대기</td>
-                                </tr>
+                                <tbody id="consulting_reservation_list">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>
+                                            <a class="url_link" data-value="122">122</a>
+                                        </td>
+                                        <td>2024.08.05</td>
+                                        <td>12:30</td>
+                                        <td>취득세</td>
+                                        <td>홍길동</td>
+                                        <td>이민정음 세무사</td>
+                                        <td>대기</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>
+                                            <a class="url_link" data-value="121">121</a>
+                                        </td>
+                                        <td>2024.08.05</td>
+                                        <td>12:30</td>
+                                        <td>취득세</td>
+                                        <td>홍길동</td>
+                                        <td>이민정음 세무사</td>
+                                        <td>대기</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>
+                                            <a class="url_link" data-value="120">120</a>
+                                        </td>
+                                        <td>2024.08.05</td>
+                                        <td>12:30</td>
+                                        <td>취득세</td>
+                                        <td>홍길동</td>
+                                        <td>이민정음 세무사</td>
+                                        <td>대기</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>
+                                            <a class="url_link" data-value="119">119</a>
+                                        </td>
+                                        <td>2024.08.05</td>
+                                        <td>12:30</td>
+                                        <td>취득세</td>
+                                        <td>홍길동</td>
+                                        <td>이민정음 세무사</td>
+                                        <td>대기</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>
+                                            <a class="url_link" data-value="118">118</a>
+                                        </td>
+                                        <td>2024.08.05</td>
+                                        <td>12:30</td>
+                                        <td>취득세</td>
+                                        <td>홍길동</td>
+                                        <td>이민정음 세무사</td>
+                                        <td>대기</td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>
+                                            <a class="url_link" data-value="117">117</a>
+                                        </td>
+                                        <td>2024.08.05</td>
+                                        <td>12:30</td>
+                                        <td>취득세</td>
+                                        <td>홍길동</td>
+                                        <td>이민정음 세무사</td>
+                                        <td>대기</td>
+                                    </tr>
+                                    <tr>
+                                        <td>7</td>
+                                        <td>
+                                            <a class="url_link" data-value="116">116</a>
+                                        </td>
+                                        <td>2024.08.05</td>
+                                        <td>12:30</td>
+                                        <td>취득세</td>
+                                        <td>홍길동</td>
+                                        <td>이민정음 세무사</td>
+                                        <td>대기</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="bottomArea">
-                <button class="normal" onclick="initData()">초기화</button>
-                <button class="important" onclick="saveData()">저장</button>
-            </div>
-
         </div>
     </section>
 

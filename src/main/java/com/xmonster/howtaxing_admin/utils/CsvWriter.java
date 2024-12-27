@@ -2,7 +2,7 @@ package com.xmonster.howtaxing_admin.utils;
 
 import com.xmonster.howtaxing_admin.dto.house.HousePubLandPriceInfoDto;
 import com.xmonster.howtaxing_admin.model.HousePubLandPriceInfo;
-import com.xmonster.howtaxing_admin.repository.HousePubLandPriceInfoRepository;
+import com.xmonster.howtaxing_admin.repository.house.HousePubLandPriceInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Configuration;

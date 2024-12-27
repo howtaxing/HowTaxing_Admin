@@ -32,4 +32,7 @@ public interface CalculationProcessRepository extends JpaRepository<CalculationP
     Map<String, Object> findSelectContentBySelectNo(@Param("calcType") String calcType, @Param("branchNo") String branchNo, @Param("selectNo") Integer selectNo);
 
     Optional<CalculationProcess> findByCalculationProcessId(CalculationProcessId calculationProcessId);
+
+    @Query(value = "SELECT * FROM calculation_process c WHERE (c.calc_type = :calcType AND c.branch_no = :branchNo)", nativeQuery = true)
+    Optional<List<CalculationProcess>> findByCalcTypeAndBranchNo(@Param("calcType") String calcType, @Param("branchNo") String branchNo);
 }

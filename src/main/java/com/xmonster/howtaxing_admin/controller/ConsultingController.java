@@ -1,6 +1,6 @@
 package com.xmonster.howtaxing_admin.controller;
 
-import com.xmonster.howtaxing_admin.dto.consulting.ConsultingScheduleDateInfoSaveRequest;
+import com.xmonster.howtaxing_admin.dto.consulting.*;
 import com.xmonster.howtaxing_admin.service.ConsultingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,5 +41,33 @@ public class ConsultingController {
     public Object saveConsultingScheduleInfo(@RequestBody ConsultingScheduleDateInfoSaveRequest consultingScheduleDateInfoSaveRequest) throws Exception {
         log.info(">> [Controller]ConsultingController saveConsultingScheduleInfo - 상담일정 정보 저장");
         return consultingService.saveConsultingScheduleInfo(consultingScheduleDateInfoSaveRequest);
+    }
+
+    // 상담예약정보 목록 조회
+    @PostMapping("/consulting/reservationList")
+    public Object getConsultingReservationInfoList(@RequestBody ConsultingReservationInfoListRequest consultingReservationInfoListRequest) throws Exception {
+        log.info(">> [Controller]ConsultingController getConsultingReservationInfoList - 상담예약정보 목록 조회");
+        return consultingService.getConsultingReservationInfoList(consultingReservationInfoListRequest);
+    }
+
+    // 상담예약정보 상세 조회
+    @GetMapping("/consulting/reservationDetail")
+    public Object getConsultingReservationInfoDetail(@RequestParam Long consultingReservationId) throws Exception {
+        log.info(">> [Controller]ConsultingController getConsultingReservationInfoDetail - 상담예약정보 상세 조회");
+        return consultingService.getConsultingReservationInfoDetail(consultingReservationId);
+    }
+
+    // 상담 상태 변경
+    @PutMapping("/consulting/changeConsultingStatus")
+    public Object changeConsultingStatus(@RequestBody ConsultingStatusChangeRequest consultingStatusChangeRequest) throws Exception {
+        log.info(">> [Controller]ConsultingController changeConsultingStatus - 상담 상태 변경");
+        return consultingService.changeConsultingStatus(consultingStatusChangeRequest);
+    }
+
+    // 상담 데이터 저장
+    @PutMapping("/consulting/saveConsultingData")
+    public Object saveConsultingData(@RequestBody ConsultingDataSaveRequest consultingDataSaveRequest) throws Exception {
+        log.info(">> [Controller]ConsultingController saveConsultingData - 상담 데이터 저장");
+        return consultingService.saveConsultingData(consultingDataSaveRequest);
     }
 }
