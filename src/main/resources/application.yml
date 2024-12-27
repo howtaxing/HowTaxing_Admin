@@ -7,7 +7,7 @@ spring:
       "local" : "local, common"
       "dev" : "dev, common"
       "real" : "real, common"
-    active: local   #활성 프로필 설정(local, dev, real)
+    active: real   #활성 프로필 설정(local, dev, real)
 
 --- # local 설정
 spring:
@@ -50,7 +50,7 @@ spring:
     activate:
       on-profile: "dev"
   datasource:
-    url: jdbc:log4jdbc:mysql://devapp.how-taxing.com:3306/howtaxing?useSSL=false&autoReconnect=true&autoReconnection=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Seoul
+    url: jdbc:log4jdbc:mysql://3.39.27.126:3306/howtaxing?useSSL=false&autoReconnect=true&autoReconnection=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Seoul
     username: root
     password: Xmonster11@@
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
@@ -84,7 +84,7 @@ spring:
     activate:
       on-profile: "real"
   datasource:
-    url: jdbc:log4jdbc:mysql://127.0.0.1:3306/howtaxing?useSSL=false&autoReconnect=true&autoReconnection=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Seoul
+    url: jdbc:log4jdbc:mysql://43.201.96.165:3306/howtaxing?useSSL=false&autoReconnect=true&autoReconnection=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Seoul
     username: root
     password: Xmonster11@@
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
