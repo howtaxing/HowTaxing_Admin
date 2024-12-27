@@ -283,7 +283,7 @@ section .contentFrame {
     align-items: center;
     position: relative;
     border: solid 1px #8c8c8c;
-    min-width: 1700px;
+    min-width: 1500px;
     min-height: 770px;
     background-color: white;
 }
